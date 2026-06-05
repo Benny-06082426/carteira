@@ -442,10 +442,22 @@ function renderLogin() {
     return;
   }
   lista.innerHTML = perfis.map(p => `
-    <div class="perfil-btn" onclick="selecionarPerfil('${p.id}')">
-      <div class="perfil-avatar" style="background:${p.cor}">${p.emoji}</div>
-      <div class="perfil-info"><div class="perfil-nome">${p.nome}</div><div class="perfil-hint">Toque para entrar</div></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div class="perfil-btn" style="margin-bottom:0;flex:1" onclick="selecionarPerfil('${p.id}')">
+        <div class="perfil-avatar" style="background:${p.cor}">${p.emoji}</div>
+        <div class="perfil-info"><div class="perfil-nome">${p.nome}</div><div class="perfil-hint">Toque para entrar</div></div>
+      </div>
+      <button onclick="excluirPerfil('${p.id}','${p.nome}')" style="background:var(--surface2);border:1px solid var(--border);color:var(--warn);width:42px;height:42px;border-radius:var(--radius-sm);font-size:16px;cursor:pointer;flex-shrink:0">🗑</button>
     </div>`).join('');
+}
+
+function excluirPerfil(id, nome) {
+  if (!confirm('Excluir o perfil "' + nome + '"? Todos os dados serão apagados.')) return;
+  ['fixas','dividas','receber','pagFixas'].forEach(tipo => localStorage.removeItem(getChave(id, tipo)));
+  const perfis = getPerfis().filter(p => p.id !== id);
+  savePerfis(perfis);
+  renderLogin();
+  toast('Perfil excluído');
 }
 
 function irCriar() {
