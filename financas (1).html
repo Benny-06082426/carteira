@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Carteira</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14; --surface: #161a22; --surface2: #1e2330; --surface3: #252c3a;
+    --border: #2a3245; --text: #e8eaf0; --muted: #6b7591;
+    --accent: #4ade9b; --accent2: #3bc5ff; --warn: #ff7b5b; --yellow: #f5c842; --purple: #a78bfa;
+    --radius: 16px; --radius-sm: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; max-width: 430px; margin: 0 auto; overflow-x: hidden; }
+
+  /* ── TELA DE LOGIN ── */
+  #telaLogin {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 32px 24px;
+  }
+  .login-logo { font-size: 48px; margin-bottom: 8px; }
+  .login-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+  .login-sub { font-size: 13px; color: var(--muted); margin-bottom: 40px; }
+  .login-box { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 20px; margin-bottom: 16px; }
+  .login-box-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; margin-bottom: 16px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .perfil-btn {
+    width: 100%; display: flex; align-items: center; gap: 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 10px;
+    cursor: pointer; transition: border-color .2s;
+  }
+  .perfil-btn:active { border-color: var(--accent); }
+  .perfil-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .perfil-info { text-align: left; }
+  .perfil-nome { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; }
+  .perfil-hint { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .btn-novo-perfil {
+    width: 100%; background: none; border: 1px dashed var(--border);
+    color: var(--muted); border-radius: var(--radius-sm); padding: 12px;
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    cursor: pointer; margin-top: 4px;
+  }
+  .btn-novo-perfil:active { border-color: var(--accent); color: var(--accent); }
+
+  /* TELA SENHA */
+  #telaSenha { min-height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; }
+  .senha-avatar { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin-bottom: 12px; }
+  .senha-nome { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 4px; }
+  .senha-sub { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+  .senha-dots { display: flex; gap: 16px; justify-content: center; margin-bottom: 32px; }
+  .senha-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); background: transparent; transition: all .2s; }
+  .senha-dot.filled { background: var(--accent); border-color: var(--accent); }
+  .teclado { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 280px; }
+  .tecla {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 18px 0; text-align: center;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px;
+    cursor: pointer; user-select: none; transition: background .1s;
+  }
+  .tecla:active { background: var(--surface3); }
+  .tecla.apagar { font-size: 18px; color: var(--muted); }
+  .tecla.vazio { background: transparent; border-color: transparent; pointer-events: none; }
+  .erro-senha { color: var(--warn); font-size: 13px; text-align: center; margin-top: 16px; min-height: 20px; }
+  .btn-voltar-login { background: none; border: none; color: var(--muted); font-size: 13px; cursor: pointer; margin-top: 20px; text-decoration: underline; }
+
+  /* TELA CRIAR PERFIL */
+  #telaCriar { min-height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; }
+  .criar-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 6px; }
+  .criar-sub { font-size: 13px; color: var(--muted); margin-bottom: 32px; text-align: center; }
+  .emoji-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 24px; }
+  .emoji-opt {
+    background: var(--surface2); border: 2px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 0; text-align: center;
+    font-size: 24px; cursor: pointer; transition: all .15s;
+  }
+  .emoji-opt.sel { border-color: var(--accent); background: rgba(74,222,155,.1); }
+  .criar-form { width: 100%; }
+
+  /* APP */
+  #telaApp { display: none; }
+  .app-header {
+    background: var(--surface); padding: 16px 20px 0;
+    border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .app-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--accent); }
+  .total-badge { background: var(--surface3); border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; font-size: 11px; color: var(--muted); }
+  .total-badge span { color: var(--warn); font-weight: 700; font-size: 12px; }
+  .btn-sair { background: none; border: none; color: var(--muted); font-size: 11px; cursor: pointer; padding: 2px 6px; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; }
+  .tab { flex: 1; padding: 10px 4px; text-align: center; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; letter-spacing: 0.3px; text-transform: uppercase; user-select: none; }
+  .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+  .tab-icon { font-size: 17px; display: block; margin-bottom: 3px; }
+
+  .content { padding: 16px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* SUMMARY */
+  .summary-card { background: linear-gradient(135deg, var(--surface2) 0%, var(--surface3) 100%); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; position: relative; overflow: hidden; }
+  .summary-card::before { content: ''; position: absolute; top: -30px; right: -30px; width: 100px; height: 100px; border-radius: 50%; background: var(--accent); opacity: .05; }
+  .summary-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
+  .summary-value { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; }
+  .summary-value.red { color: var(--warn); }
+  .summary-row { display: flex; gap: 10px; margin-top: 12px; }
+  .summary-mini { flex: 1; background: var(--surface); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
+  .summary-mini .val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; margin-top: 3px; }
+
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; margin-top: 8px; }
+  .section-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); }
+  .btn-add { background: var(--accent); color: #0d0f14; border: none; border-radius: 20px; padding: 6px 14px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .btn-add:active { opacity: .8; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 10px; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .card-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; }
+  .card-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .card-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 3px 8px; border-radius: 10px; flex-shrink: 0; }
+  .tag-fixo { background: #1a2a3a; color: var(--accent2); }
+  .tag-divida { background: #2a1a3a; color: var(--purple); }
+
+  .progress-wrap { margin: 10px 0 6px; }
+  .progress-bg { background: var(--surface3); border-radius: 4px; height: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width .4s; }
+  .progress-fill.green { background: var(--accent); }
+  .progress-fill.yellow { background: var(--yellow); }
+  .progress-fill.red { background: var(--warn); }
+  .progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .card-values { display: flex; justify-content: space-between; }
+  .cv { text-align: center; }
+  .cv-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px; }
+  .cv-value { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; }
+  .cv-value.red { color: var(--warn); }
+  .cv-value.green { color: var(--accent); }
+
+  .divider { height: 1px; background: var(--border); margin: 10px 0; }
+  .card-actions { display: flex; gap: 8px; }
+  .btn-sm { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; border: none; cursor: pointer; }
+  .btn-sm:active { opacity: .7; }
+  .btn-pay { background: var(--accent); color: #0d0f14; }
+  .btn-hist { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-del { background: var(--surface2); color: var(--warn); border: 1px solid var(--border); max-width: 40px; }
+
+  .badge-quitado { background: var(--accent); color: #0d0f14; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; }
+  .card.quitado { opacity: .5; }
+
+  .mes-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px; }
+  .mes-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-size: 18px; cursor: pointer; padding: 4px 12px; border-radius: var(--radius-sm); }
+  .mes-label { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; min-width: 80px; text-align: center; color: var(--muted); }
+
+  .fixo-row { display: flex; justify-content: space-between; align-items: center; }
+  .fixo-valor { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 200; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 24px 20px 36px; width: 100%; max-width: 430px; max-height: 92vh; overflow-y: auto; border-top: 1px solid var(--border); animation: slideUp .25s ease; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; margin-bottom: 20px; }
+  .modal-close { float: right; background: var(--surface3); border: none; color: var(--muted); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 16px; line-height: 28px; text-align: center; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 12px 14px; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 16px; appearance: none; transition: border-color .2s; }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  .money-input-wrap { position: relative; }
+  .money-prefix { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 16px; font-weight: 600; pointer-events: none; }
+  .form-input.money { padding-left: 42px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 20px; color: var(--accent); }
+  .btn-primary { width: 100%; background: var(--accent); color: #0d0f14; border: none; border-radius: var(--radius-sm); padding: 14px; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 8px; }
+  .btn-primary:active { opacity: .85; }
+  .form-row { display: flex; gap: 10px; }
+  .form-row .form-group { flex: 1; }
+
+  .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .hist-item:last-child { border-bottom: none; }
+  .hist-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .hist-desc { font-size: 13px; font-weight: 500; }
+  .hist-val { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--accent); font-size: 15px; }
+  .hist-del { background: none; border: none; color: var(--warn); font-size: 16px; cursor: pointer; padding: 4px; }
+
+  .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-icon { font-size: 38px; margin-bottom: 10px; display: block; }
+  .empty-text { font-size: 13px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface3); border: 1px solid var(--border); color: var(--text); padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 500; opacity: 0; transition: all .3s; z-index: 300; white-space: nowrap; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .scrollable { overflow-y: auto; max-height: 320px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ TELA LOGIN ══════════ -->
+<div id="telaLogin">
+  <div class="login-logo">🔒</div>
+  <div class="login-title">Carteira</div>
+  <div class="login-sub">Selecione seu perfil</div>
+  <div class="login-box">
+    <div class="login-box-title">Perfis cadastrados</div>
+    <div id="listaPerfis">
+      <div class="empty" style="padding:20px 0"><span class="empty-icon" style="font-size:28px">👤</span><div class="empty-text">Nenhum perfil ainda</div></div>
+    </div>
+    <button class="btn-novo-perfil" onclick="irCriar()">+ Criar novo perfil</button>
+  </div>
+</div>
+
+<!-- ══════════ TELA SENHA ══════════ -->
+<div id="telaSenha">
+  <div class="senha-avatar" id="senhaAvatar"></div>
+  <div class="senha-nome" id="senhaNome"></div>
+  <div class="senha-sub">Digite sua senha de 4 dígitos</div>
+  <div class="senha-dots" id="senhaDots">
+    <div class="senha-dot" id="d0"></div>
+    <div class="senha-dot" id="d1"></div>
+    <div class="senha-dot" id="d2"></div>
+    <div class="senha-dot" id="d3"></div>
+  </div>
+  <div class="teclado">
+    <div class="tecla" onclick="tecla('1')">1</div>
+    <div class="tecla" onclick="tecla('2')">2</div>
+    <div class="tecla" onclick="tecla('3')">3</div>
+    <div class="tecla" onclick="tecla('4')">4</div>
+    <div class="tecla" onclick="tecla('5')">5</div>
+    <div class="tecla" onclick="tecla('6')">6</div>
+    <div class="tecla" onclick="tecla('7')">7</div>
+    <div class="tecla" onclick="tecla('8')">8</div>
+    <div class="tecla" onclick="tecla('9')">9</div>
+    <div class="tecla vazio"></div>
+    <div class="tecla" onclick="tecla('0')">0</div>
+    <div class="tecla apagar" onclick="apagarTecla()">⌫</div>
+  </div>
+  <div class="erro-senha" id="erroSenha"></div>
+  <button class="btn-voltar-login" onclick="voltarLogin()">← Trocar perfil</button>
+</div>
+
+<!-- ══════════ TELA CRIAR PERFIL ══════════ -->
+<div id="telaCriar">
+  <div class="criar-title">Novo perfil</div>
+  <div class="criar-sub">Escolha um emoji e crie sua senha</div>
+  <div class="emoji-grid" id="emojiGrid"></div>
+  <div class="criar-form">
+    <div class="form-group">
+      <label class="form-label">Seu nome</label>
+      <input class="form-input" id="criarNome" placeholder="Ex: Cris, João...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Senha de 4 dígitos</label>
+      <input class="form-input" id="criarSenha" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+    </div>
+    <button class="btn-primary" onclick="salvarPerfil()">Criar perfil</button>
+    <button class="btn-voltar-login" style="display:block;text-align:center;margin-top:12px" onclick="voltarLogin()">← Voltar</button>
+  </div>
+</div>
+
+<!-- ══════════ APP ══════════ -->
+<div id="telaApp">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="header-left">
+        <div class="header-avatar" id="appAvatar"></div>
+        <div class="app-title" id="appNome">Carteira</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="total-badge">Em aberto: <span id="totalGeral">R$ 0</span></div>
+        <button class="btn-sair" onclick="sair()">Sair</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('fixas')"><span class="tab-icon">🏠</span>Fixas</div>
+      <div class="tab" onclick="showTab('dividas')"><span class="tab-icon">📌</span>Dívidas</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page active" id="page-fixas">
+      <div class="mes-nav">
+        <button class="mes-btn" onclick="mudaMes(-1)">‹</button>
+        <div class="mes-label" id="mesLabel">—</div>
+        <button class="mes-btn" onclick="mudaMes(1)">›</button>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Total do mês</div>
+        <div class="summary-value red" id="totalFixas">R$ 0,00</div>
+        <div class="summary-row">
+          <div class="summary-mini"><div class="summary-label">✓ Pagas</div><div class="val green" id="fixasPagas">R$ 0,00</div></div>
+          <div class="summary-mini"><div class="summary-label">⏳ Pendentes</div><div class="val red" id="fixasPendentes">R$ 0,00</div></div>
+        </div>
+      </div>
+      <div class="section-header">
+        <div class="section-title">Contas fixas</div>
+        <button class="btn-add" onclick="abrirModalFixa()">+ Nova</button>
+      </div>
+      <div id="listaFixas"></div>
+    </div>
+
+    <div class="page" id="page-dividas">
+      <div class="summary-card">
+        <div class="summary-label">Total em aberto</div>
+        <div class="summary-value red" id="totalDividas">R$ 0,00</div>
+        <div class="summary-row">
+          <div class="summary-mini"><div class="summary-label">✓ Pago</div><div class="val green" id="dividasPago">R$ 0,00</div></div>
+          <div class="summary-mini"><div class="summary-label">📋 Contas</div><div class="val" style="color:var(--yellow)" id="dividasQtd">0</div></div>
+        </div>
+      </div>
+      <div class="section-header">
+        <div class="section-title">Dívidas &amp; Contas</div>
+        <button class="btn-add" onclick="abrirModalDivida()">+ Nova</button>
+      </div>
+      <div id="listaDividas"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAIS -->
+<div class="modal-overlay" id="modalFixa">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalFixa')">✕</button>
+    <div class="modal-title">Nova conta fixa</div>
+    <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="fixaNome" placeholder="Ex: Energia, Aluguel..."></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Valor mensal</label><div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="fixaValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div></div>
+      <div class="form-group"><label class="form-label">Vence dia</label><input class="form-input" id="fixaDia" type="number" placeholder="10" min="1" max="31" inputmode="numeric"></div>
+    </div>
+    <button class="btn-primary" onclick="salvarFixa()">Salvar</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDivida">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalDivida')">✕</button>
+    <div class="modal-title">Nova dívida / conta</div>
+    <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="divNome" placeholder="Ex: Moto, Loja ABC..."></div>
+    <div class="form-group"><label class="form-label">Valor total da dívida</label><div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="divValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div></div>
+    <div class="form-group"><label class="form-label">Observação (opcional)</label><input class="form-input" id="divObs" placeholder="Ex: Financiamento, empréstimo..."></div>
+    <button class="btn-primary" onclick="salvarDivida()">Salvar</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalPag">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalPag')">✕</button>
+    <div class="modal-title" id="modalPagTitle">Registrar pagamento</div>
+    <input type="hidden" id="pagTipo"><input type="hidden" id="pagId">
+    <div class="form-group"><label class="form-label">Data</label><input class="form-input" id="pagData" type="date"></div>
+    <div id="fieldsPagFixa" style="display:none"><p style="color:var(--muted);font-size:13px;margin-bottom:12px">Marcar como paga este mês?</p></div>
+    <div id="fieldsPagDivida" style="display:none">
+      <div class="form-group"><label class="form-label">Valor pago</label><div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="pagValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div></div>
+      <div class="form-group"><label class="form-label">Observação (opcional)</label><input class="form-input" id="pagObs" placeholder="Ex: PIX, dinheiro..."></div>
+    </div>
+    <button class="btn-primary" onclick="confirmarPagamento()">✓ Confirmar</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalHist">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalHist')">✕</button>
+    <div class="modal-title" id="modalHistTitle">Histórico</div>
+    <div class="scrollable" id="modalHistContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════
+//  PERFIS
+// ══════════════════════════════
+const EMOJIS = ['😊','😎','🦁','🐯','🦋','🌟','🔥','💎','🌙','🌊','🎯','🎸','🏆','🌺','🦊'];
+let perfilAtivo = null;
+
+function getPerfis() { return JSON.parse(localStorage.getItem('perfis') || '[]'); }
+function savePerfis(p) { localStorage.setItem('perfis', JSON.stringify(p)); }
+
+function getChave(perfilId, tipo) { return `dados_${perfilId}_${tipo}`; }
+function loadDados(perfilId) {
+  return {
+    fixas:    JSON.parse(localStorage.getItem(getChave(perfilId,'fixas'))    || '[]'),
+    dividas:  JSON.parse(localStorage.getItem(getChave(perfilId,'dividas'))  || '[]'),
+    pagFixas: JSON.parse(localStorage.getItem(getChave(perfilId,'pagFixas')) || '{}'),
+  };
+}
+function saveDados(perfilId, d) {
+  localStorage.setItem(getChave(perfilId,'fixas'),    JSON.stringify(d.fixas));
+  localStorage.setItem(getChave(perfilId,'dividas'),  JSON.stringify(d.dividas));
+  localStorage.setItem(getChave(perfilId,'pagFixas'), JSON.stringify(d.pagFixas));
+}
+
+let data = {};
+const MESES_ABREV = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+let mesAtual = new Date().getMonth();
+let anoAtual = new Date().getFullYear();
+
+// ── TELA LOGIN ──
+function renderLogin() {
+  const perfis = getPerfis();
+  const lista = document.getElementById('listaPerfis');
+  if (!perfis.length) {
+    lista.innerHTML = `<div class="empty" style="padding:20px 0"><span class="empty-icon" style="font-size:28px">👤</span><div class="empty-text">Nenhum perfil ainda</div></div>`;
+    return;
+  }
+  lista.innerHTML = perfis.map(p => `
+    <div class="perfil-btn" onclick="selecionarPerfil('${p.id}')">
+      <div class="perfil-avatar" style="background:${p.cor}">${p.emoji}</div>
+      <div class="perfil-info">
+        <div class="perfil-nome">${p.nome}</div>
+        <div class="perfil-hint">Toque para entrar</div>
+      </div>
+    </div>`).join('');
+}
+
+function irCriar() {
+  mostrarTela('telaCriar');
+  const grid = document.getElementById('emojiGrid');
+  grid.innerHTML = EMOJIS.map((e,i) => `<div class="emoji-opt ${i===0?'sel':''}" onclick="selEmoji(this,'${e}')">${e}</div>`).join('');
+  document.getElementById('criarNome').value = '';
+  document.getElementById('criarSenha').value = '';
+  emojiSel = EMOJIS[0];
+}
+let emojiSel = EMOJIS[0];
+function selEmoji(el, e) {
+  document.querySelectorAll('.emoji-opt').forEach(x => x.classList.remove('sel'));
+  el.classList.add('sel'); emojiSel = e;
+}
+
+const CORES = ['#1a3a2a','#1a2a3a','#3a1a2a','#2a2a1a','#2a1a3a'];
+function salvarPerfil() {
+  const nome = document.getElementById('criarNome').value.trim();
+  const senha = document.getElementById('criarSenha').value;
+  if (!nome) { toast('⚠ Informe seu nome'); return; }
+  if (senha.length !== 4 || !/^\d{4}$/.test(senha)) { toast('⚠ Senha deve ter 4 números'); return; }
+  const perfis = getPerfis();
+  const cor = CORES[perfis.length % CORES.length];
+  perfis.push({ id: uid(), nome, emoji: emojiSel, cor, senha: btoa(senha) });
+  savePerfis(perfis);
+  toast('✓ Perfil criado!');
+  voltarLogin();
+}
+
+// ── TELA SENHA ──
+let senhaDigitada = '';
+let perfilSelecionadoId = '';
+
+function selecionarPerfil(id) {
+  const perfis = getPerfis();
+  const p = perfis.find(x => x.id === id);
+  perfilSelecionadoId = id;
+  senhaDigitada = '';
+  document.getElementById('senhaAvatar').textContent = p.emoji;
+  document.getElementById('senhaAvatar').style.background = p.cor;
+  document.getElementById('senhaNome').textContent = p.nome;
+  document.getElementById('erroSenha').textContent = '';
+  atualizarDots();
+  mostrarTela('telaSenha');
+}
+
+function tecla(n) {
+  if (senhaDigitada.length >= 4) return;
+  senhaDigitada += n;
+  atualizarDots();
+  if (senhaDigitada.length === 4) {
+    setTimeout(verificarSenha, 150);
+  }
+}
+function apagarTecla() {
+  senhaDigitada = senhaDigitada.slice(0,-1);
+  atualizarDots();
+  document.getElementById('erroSenha').textContent = '';
+}
+function atualizarDots() {
+  for (let i=0;i<4;i++) {
+    document.getElementById('d'+i).classList.toggle('filled', i < senhaDigitada.length);
+  }
+}
+function verificarSenha() {
+  const perfis = getPerfis();
+  const p = perfis.find(x => x.id === perfilSelecionadoId);
+  if (btoa(senhaDigitada) === p.senha) {
+    entrarApp(p);
+  } else {
+    document.getElementById('erroSenha').textContent = '❌ Senha incorreta';
+    senhaDigitada = '';
+    atualizarDots();
+  }
+}
+
+function entrarApp(p) {
+  perfilAtivo = p;
+  data = loadDados(p.id);
+  document.getElementById('appAvatar').textContent = p.emoji;
+  document.getElementById('appAvatar').style.background = p.cor;
+  document.getElementById('appNome').textContent = p.nome;
+  mostrarTela('telaApp');
+  render();
+}
+
+function sair() {
+  perfilAtivo = null; data = {};
+  mostrarTela('telaLogin');
+  renderLogin();
+}
+function voltarLogin() { mostrarTela('telaLogin'); renderLogin(); }
+
+function mostrarTela(id) {
+  ['telaLogin','telaSenha','telaCriar','telaApp'].forEach(t => {
+    const el = document.getElementById(t);
+    el.style.display = (t === id) ? (t === 'telaApp' ? 'block' : 'flex') : 'none';
+  });
+}
+
+// ══════════════════════════════
+//  UTILS
+// ══════════════════════════════
+const fmt = v => 'R$ ' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+const mesKey = (m,a) => `${a}-${String(m+1).padStart(2,'0')}`;
+
+function toast(msg, dur=2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+function mascaraMoeda(el) {
+  let v = el.value.replace(/\D/g,'');
+  if (!v) { el.value = ''; return; }
+  v = (parseInt(v,10)/100).toFixed(2);
+  el.value = v.replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+}
+function parseMoeda(str) {
+  if (!str) return 0;
+  return parseFloat(str.replace(/\./g,'').replace(',','.')) || 0;
+}
+
+// ══════════════════════════════
+//  TABS / MÊS
+// ══════════════════════════════
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['fixas','dividas'][i] === tab));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  render();
+}
+function mudaMes(d) {
+  mesAtual += d;
+  if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
+  if (mesAtual > 11) { mesAtual = 0; anoAtual++; }
+  renderFixas();
+}
+
+// ══════════════════════════════
+//  RENDER
+// ══════════════════════════════
+function renderFixas() {
+  const mk = mesKey(mesAtual, anoAtual);
+  document.getElementById('mesLabel').textContent = `${MESES_ABREV[mesAtual]}/${String(anoAtual).slice(2)}`;
+  const pagsDoMes = data.pagFixas[mk] || {};
+  let total=0, pagas=0, pendentes=0;
+  const lista = document.getElementById('listaFixas');
+  if (!data.fixas.length) {
+    lista.innerHTML = `<div class="empty"><span class="empty-icon">🏠</span><div class="empty-text">Nenhuma conta fixa cadastrada</div></div>`;
+    ['totalFixas','fixasPagas','fixasPendentes'].forEach(id => document.getElementById(id).textContent = fmt(0));
+    return;
+  }
+  lista.innerHTML = data.fixas.map(c => {
+    total += c.valor; const pago = !!pagsDoMes[c.id];
+    if (pago) pagas += c.valor; else pendentes += c.valor;
+    return `<div class="card ${pago?'quitado':''}">
+      <div class="card-header"><div><div class="card-name">${c.nome}</div><div class="card-sub">Vence dia ${c.dia||'—'}</div></div>
+      ${pago ? '<span class="badge-quitado">✓ Pago</span>' : '<span class="card-tag tag-fixo">Pendente</span>'}</div>
+      <div class="fixo-row">
+        <div class="fixo-valor" style="color:${pago?'var(--accent)':'var(--warn)'}">${fmt(c.valor)}</div>
+        <div style="display:flex;gap:6px">
+          ${!pago ? `<button class="btn-sm btn-pay" onclick="abrirPagFixa('${c.id}')">✓ Pagar</button>`
+                  : `<button class="btn-sm btn-hist" onclick="despagarFixa('${c.id}')">↩ Desfazer</button>`}
+          <button class="btn-sm btn-del" onclick="deletarFixa('${c.id}')">🗑</button>
+        </div>
+      </div></div>`;
+  }).join('');
+  document.getElementById('totalFixas').textContent = fmt(total);
+  document.getElementById('fixasPagas').textContent = fmt(pagas);
+  document.getElementById('fixasPendentes').textContent = fmt(pendentes);
+}
+
+function renderDividas() {
+  let totalSaldo=0, totalPago=0;
+  const lista = document.getElementById('listaDividas');
+  if (!data.dividas.length) {
+    lista.innerHTML = `<div class="empty"><span class="empty-icon">📌</span><div class="empty-text">Nenhuma dívida cadastrada</div></div>`;
+    document.getElementById('totalDividas').textContent = fmt(0);
+    document.getElementById('dividasPago').textContent = fmt(0);
+    document.getElementById('dividasQtd').textContent = '0';
+    return;
+  }
+  lista.innerHTML = data.dividas.map(c => {
+    const pago = (c.pagamentos||[]).reduce((s,p) => s+p.valor, 0);
+    const saldo = Math.max(0, c.valorTotal - pago);
+    const pct = Math.min(100, Math.round((pago / c.valorTotal) * 100));
+    const quitado = saldo <= 0;
+    totalSaldo += saldo; totalPago += pago;
+    const barCls = pct>=80?'green':pct>=40?'yellow':'red';
+    return `<div class="card ${quitado?'quitado':''}">
+      <div class="card-header"><div><div class="card-name">${c.nome}</div>${c.obs?`<div class="card-sub">${c.obs}</div>`:''}</div>
+      ${quitado ? '<span class="badge-quitado">✓ Quitado</span>' : '<span class="card-tag tag-divida">Em aberto</span>'}</div>
+      <div class="progress-wrap"><div class="progress-bg"><div class="progress-fill ${barCls}" style="width:${pct}%"></div></div>
+      <div class="progress-labels"><span>${pct}% pago</span><span>${(c.pagamentos||[]).length} lançamento(s)</span></div></div>
+      <div class="card-values">
+        <div class="cv"><div class="cv-label">Total</div><div class="cv-value">${fmt(c.valorTotal)}</div></div>
+        <div class="cv"><div class="cv-label">Pago</div><div class="cv-value green">${fmt(pago)}</div></div>
+        <div class="cv"><div class="cv-label">Saldo</div><div class="cv-value red">${fmt(saldo)}</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="card-actions">
+        ${!quitado ? `<button class="btn-sm btn-pay" onclick="abrirPagDivida('${c.id}')">✓ Pagar</button>` : ''}
+        <button class="btn-sm btn-hist" onclick="verHist('${c.id}')">📋 Hist.</button>
+        <button class="btn-sm btn-del" onclick="deletarDivida('${c.id}')">🗑</button>
+      </div></div>`;
+  }).join('');
+  document.getElementById('totalDividas').textContent = fmt(totalSaldo);
+  document.getElementById('dividasPago').textContent = fmt(totalPago);
+  document.getElementById('dividasQtd').textContent = data.dividas.length;
+}
+
+function atualizarTotalGeral() {
+  let t = 0;
+  data.dividas && data.dividas.forEach(c => {
+    const pago = (c.pagamentos||[]).reduce((s,p) => s+p.valor, 0);
+    t += Math.max(0, c.valorTotal - pago);
+  });
+  document.getElementById('totalGeral').textContent = fmt(t);
+}
+
+function render() { renderFixas(); renderDividas(); atualizarTotalGeral(); }
+
+// ══════════════════════════════
+//  CADASTROS
+// ══════════════════════════════
+function abrirModalFixa() {
+  ['fixaNome','fixaDia'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fixaValor').value = '';
+  document.getElementById('modalFixa').classList.add('open');
+}
+function abrirModalDivida() {
+  ['divNome','divObs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('divValor').value = '';
+  document.getElementById('modalDivida').classList.add('open');
+}
+function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function salvarFixa() {
+  const nome = document.getElementById('fixaNome').value.trim();
+  const valor = parseMoeda(document.getElementById('fixaValor').value);
+  const dia = parseInt(document.getElementById('fixaDia').value) || 0;
+  if (!nome) { toast('⚠ Informe o nome'); return; }
+  if (!valor) { toast('⚠ Informe o valor'); return; }
+  data.fixas.push({ id: uid(), nome, valor, dia });
+  saveDados(perfilAtivo.id, data); fecharModal('modalFixa'); render(); toast('✓ Conta fixa salva!');
+}
+function salvarDivida() {
+  const nome = document.getElementById('divNome').value.trim();
+  const valorTotal = parseMoeda(document.getElementById('divValor').value);
+  const obs = document.getElementById('divObs').value.trim();
+  if (!nome) { toast('⚠ Informe o nome'); return; }
+  if (!valorTotal) { toast('⚠ Informe o valor'); return; }
+  data.dividas.push({ id: uid(), nome, valorTotal, obs, pagamentos: [] });
+  saveDados(perfilAtivo.id, data); fecharModal('modalDivida'); render(); toast('✓ Dívida salva!');
+}
+
+// ══════════════════════════════
+//  PAGAMENTOS
+// ══════════════════════════════
+function abrirPagFixa(id) {
+  document.getElementById('pagTipo').value = 'fixa';
+  document.getElementById('pagId').value = id;
+  const c = data.fixas.find(x => x.id === id);
+  document.getElementById('modalPagTitle').textContent = `Pagar — ${c.nome}`;
+  document.getElementById('pagData').value = new Date().toISOString().slice(0,10);
+  document.getElementById('fieldsPagFixa').style.display = 'block';
+  document.getElementById('fieldsPagDivida').style.display = 'none';
+  document.getElementById('modalPag').classList.add('open');
+}
+function abrirPagDivida(id) {
+  document.getElementById('pagTipo').value = 'divida';
+  document.getElementById('pagId').value = id;
+  const c = data.dividas.find(x => x.id === id);
+  document.getElementById('modalPagTitle').textContent = `Pagar — ${c.nome}`;
+  document.getElementById('pagData').value = new Date().toISOString().slice(0,10);
+  document.getElementById('fieldsPagFixa').style.display = 'none';
+  document.getElementById('fieldsPagDivida').style.display = 'block';
+  document.getElementById('pagValor').value = '';
+  document.getElementById('pagObs').value = '';
+  document.getElementById('modalPag').classList.add('open');
+}
+function despagarFixa(id) {
+  const mk = mesKey(mesAtual, anoAtual);
+  if (data.pagFixas[mk]) delete data.pagFixas[mk][id];
+  saveDados(perfilAtivo.id, data); renderFixas(); toast('Pagamento desfeito');
+}
+function confirmarPagamento() {
+  const tipo = document.getElementById('pagTipo').value;
+  const id = document.getElementById('pagId').value;
+  const dataPag = document.getElementById('pagData').value;
+  if (tipo === 'fixa') {
+    const mk = mesKey(mesAtual, anoAtual);
+    if (!data.pagFixas[mk]) data.pagFixas[mk] = {};
+    data.pagFixas[mk][id] = { data: dataPag };
+    toast('✓ Paga!');
+  } else {
+    const valor = parseMoeda(document.getElementById('pagValor').value);
+    if (!valor) { toast('⚠ Informe o valor'); return; }
+    const obs = document.getElementById('pagObs').value.trim();
+    const c = data.dividas.find(x => x.id === id);
+    c.pagamentos.push({ id: uid(), data: dataPag, valor, obs });
+    toast(`✓ ${fmt(valor)} registrado!`);
+  }
+  saveDados(perfilAtivo.id, data); fecharModal('modalPag'); render();
+}
+
+// ══════════════════════════════
+//  HISTÓRICO
+// ══════════════════════════════
+function verHist(id) {
+  const c = data.dividas.find(x => x.id === id);
+  document.getElementById('modalHistTitle').textContent = `Histórico — ${c.nome}`;
+  const pags = c.pagamentos || [];
+  if (!pags.length) {
+    document.getElementById('modalHistContent').innerHTML = '<div class="empty"><span class="empty-icon">📭</span><div class="empty-text">Sem pagamentos</div></div>';
+  } else {
+    document.getElementById('modalHistContent').innerHTML = `
+      <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Total pago</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent)">${fmt(pags.reduce((s,p)=>s+p.valor,0))}</div>
+      </div>
+      ${pags.map(p => `<div class="hist-item">
+        <div><div class="hist-desc">${p.obs||'Pagamento'}</div><div class="hist-date">${fmtData(p.data)}</div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="hist-val">${fmt(p.valor)}</div>
+          <button class="hist-del" onclick="deletarPagamento('${id}','${p.id}')">✕</button>
+        </div></div>`).join('')}`;
+  }
+  document.getElementById('modalHist').classList.add('open');
+}
+function deletarPagamento(contaId, pagId) {
+  const c = data.dividas.find(x => x.id === contaId);
+  c.pagamentos = c.pagamentos.filter(p => p.id !== pagId);
+  saveDados(perfilAtivo.id, data); render(); verHist(contaId); toast('Lançamento removido');
+}
+function fmtData(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`;
+}
+function deletarFixa(id) {
+  if (!confirm('Remover?')) return;
+  data.fixas = data.fixas.filter(c => c.id !== id);
+  saveDados(perfilAtivo.id, data); render(); toast('Removida');
+}
+function deletarDivida(id) {
+  if (!confirm('Remover?')) return;
+  data.dividas = data.dividas.filter(c => c.id !== id);
+  saveDados(perfilAtivo.id, data); render(); toast('Removida');
+}
+
+['modalFixa','modalDivida','modalPag','modalHist'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) fecharModal(id);
+  });
+});
+
+// INIT
+mostrarTela('telaLogin');
+renderLogin();
+</script>
+</body>
+</html>
