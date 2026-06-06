@@ -1122,14 +1122,31 @@ function verificarAlertasVencimento(){
 function irParaReceber(){
   showTab('receber');
   setTimeout(()=>{
-    // Scroll para o primeiro card urgente
-    const cards=document.querySelectorAll('#listaReceber .card');
-    if(cards.length>0){
-      cards[0].scrollIntoView({behavior:'smooth',block:'start'});
-      cards[0].style.border='2px solid #dc2626';
-      setTimeout(()=>{cards[0].style.border='';},2000);
+    const hj=new Date(); hj.setHours(0,0,0,0);
+    // Encontra cards urgentes pelo nome da conta
+    const urgentes=(data.receber||[]).filter(c=>{
+      const rec=(c.recebimentos||[]).reduce((s,r)=>s+r.valor,0);
+      const saldo=Math.max(0,c.valorTotal-rec);
+      if(saldo<=0||!c.venc)return false;
+      const v=new Date(c.venc+'T00:00:00');
+      const dias=Math.ceil((v-hj)/(1000*60*60*24));
+      return dias>=0&&dias<=5;
+    });
+    if(urgentes.length){
+      // Pega todos os cards da lista e destaca os urgentes
+      const todosCards=document.querySelectorAll('#listaReceber .card');
+      const nomeUrgente=urgentes[0].nome;
+      todosCards.forEach(card=>{
+        const nome=card.querySelector('.card-name');
+        if(nome&&nome.textContent===nomeUrgente){
+          card.scrollIntoView({behavior:'smooth',block:'center'});
+          card.style.border='2px solid #dc2626';
+          card.style.boxShadow='0 0 20px rgba(220,38,38,.3)';
+          setTimeout(()=>{card.style.border='';card.style.boxShadow='';},2500);
+        }
+      });
     }
-  },200);
+  },300);
 }
 
 function enviarWppLembrete(id){
