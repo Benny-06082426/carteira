@@ -55,6 +55,76 @@
   .emoji-opt.sel{border-color:#16a34a;background:#dcfce7}
   .criar-form{width:100%}
 
+  /* BOAS VINDAS */
+  #telaBV{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee 0%,#f0fdf4 60%,#dcfce7 100%)}
+  .bv-logo{font-size:56px;margin-bottom:12px}
+  .bv-title{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#16a34a;margin-bottom:6px;text-align:center}
+  .bv-sub{font-size:14px;color:#5a8a6a;margin-bottom:32px;text-align:center;line-height:1.6}
+  .bv-features{width:100%;background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:28px;box-shadow:0 4px 20px rgba(22,163,74,.1)}
+  .bv-feature{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e8f5ee}
+  .bv-feature:last-child{border-bottom:none}
+  .bv-feat-icon{font-size:22px;flex-shrink:0}
+  .bv-feat-text{font-size:13px;color:#1a2e22}
+  .bv-feat-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px}
+  .bv-price{width:100%;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:20px;box-shadow:0 4px 20px rgba(22,163,74,.3)}
+  .bv-price-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.8);margin-bottom:4px}
+  .bv-price-value{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#fff}
+  .bv-price-period{font-size:12px;color:rgba(255,255,255,.8)}
+  .btn-comprar{width:100%;background:#fff;color:#16a34a;border:none;border-radius:var(--radius-sm);padding:14px;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:12px;box-shadow:0 4px 15px rgba(22,163,74,.2)}
+  .btn-tenho-codigo{width:100%;background:none;border:2px solid rgba(22,163,74,.4);color:#16a34a;border-radius:var(--radius-sm);padding:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+
+  /* ADMIN */
+  #telaAdmin{min-height:100vh;display:none;flex-direction:column;padding:0;background:#f0f7f2;overflow-y:auto}
+  .admin-header{background:linear-gradient(135deg,#16a34a,#15803d);padding:40px 24px 24px;color:#fff}
+  .admin-header-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:2px}
+  .admin-header-sub{font-size:13px;opacity:.8}
+  .admin-body{padding:20px}
+  .admin-card{background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(22,163,74,.08);border:1px solid #b8ddc8}
+  .admin-card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#16a34a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .admin-stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e8f5ee}
+  .admin-stat:last-child{border-bottom:none}
+  .admin-stat-label{font-size:13px;color:#5a8a6a}
+  .admin-stat-value{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#1a2e22}
+  .codigo-item{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:8px;border:1px solid #b8ddc8}
+  .codigo-item.livre{background:#f0fdf4}
+  .codigo-item.usado{background:#fef2f2;border-color:#fecaca;opacity:.7}
+  .codigo-badge{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px}
+  .codigo-status{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px}
+  .codigo-status.livre{background:#dcfce7;color:#16a34a}
+  .codigo-status.usado{background:#fee2e2;color:#dc2626}
+  .btn-admin-sair{width:100%;background:none;border:2px solid #fecaca;color:#dc2626;border-radius:var(--radius-sm);padding:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px}
+  .btn-gerar{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 16px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(22,163,74,.3)}
+
+  /* TELA COMPRA */
+  #telaCompra{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee 0%,#f0fdf4 60%,#dcfce7 100%)}
+  .pix-box{width:100%;background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:0 4px 20px rgba(22,163,74,.1);border:2px solid #b8ddc8}
+  .pix-title{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#16a34a;margin-bottom:4px}
+  .pix-sub{font-size:12px;color:#5a8a6a;margin-bottom:16px}
+  .pix-chave-wrap{background:#f0fdf4;border:2px dashed #16a34a;border-radius:var(--radius-sm);padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .pix-chave-texto{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#1a2e22;word-break:break-all}
+  .btn-copiar{background:#16a34a;color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 14px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
+  .pix-valor{text-align:center;margin:16px 0}
+  .pix-valor-label{font-size:11px;color:#5a8a6a;text-transform:uppercase;letter-spacing:.5px}
+  .pix-valor-num{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;color:#16a34a}
+  .pix-steps{width:100%;background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(22,163,74,.08)}
+  .pix-step{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #e8f5ee}
+  .pix-step:last-child{border-bottom:none}
+  .pix-step-num{width:24px;height:24px;border-radius:50%;background:#16a34a;color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pix-step-text{font-size:13px;color:#1a2e22;padding-top:3px}
+
+  /* TELA ADMIN LOGIN */
+  #telaAdminLogin{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee,#f0fdf4,#dcfce7)}
+
+  /* TELA CÓDIGO */
+  #telaCodigo{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee 0%,#f0fdf4 60%,#dcfce7 100%)}
+  .codigo-icon{font-size:48px;margin-bottom:12px}
+  .codigo-title{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#1a2e22;margin-bottom:6px}
+  .codigo-sub{font-size:13px;color:#5a8a6a;margin-bottom:28px;text-align:center}
+  .codigo-input-wrap{width:100%;position:relative;margin-bottom:8px}
+  .codigo-input{width:100%;background:#fff;border:3px solid #b8ddc8;color:#1a2e22;padding:16px 14px;border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:22px;font-weight:800;text-align:center;letter-spacing:4px;text-transform:uppercase}
+  .codigo-input:focus{outline:none;border-color:#16a34a}
+  .codigo-erro{color:#dc2626;font-size:13px;text-align:center;min-height:20px;margin-bottom:12px}
+
   /* APP */
   #telaApp{display:none}
   .app-header{background:var(--surface);padding:16px 20px 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(22,163,74,.1)}
@@ -215,6 +285,39 @@
     <button class="btn-primary" onclick="salvarPerfil()">Criar perfil</button>
     <button class="btn-voltar-login" style="display:block;text-align:center;margin-top:12px" onclick="voltarLogin()">← Voltar</button>
   </div>
+</div>
+
+<!-- BOAS VINDAS -->
+<div id="telaBV">
+  <div class="bv-logo">🔒</div>
+  <div class="bv-title">Carteira</div>
+  <div class="bv-sub">Controle suas finanças com<br>simplicidade e privacidade</div>
+  <div class="bv-features">
+    <div class="bv-feature"><div class="bv-feat-icon">🏠</div><div class="bv-feat-text"><div class="bv-feat-title">Contas Fixas</div>Acompanhe energia, aluguel e mais</div></div>
+    <div class="bv-feature"><div class="bv-feat-icon">📌</div><div class="bv-feat-text"><div class="bv-feat-title">Dívidas & Financiamentos</div>Controle o saldo de cada dívida</div></div>
+    <div class="bv-feature"><div class="bv-feat-icon">💰</div><div class="bv-feat-text"><div class="bv-feat-title">A Receber</div>Nunca esqueça quem te deve</div></div>
+    <div class="bv-feature"><div class="bv-feat-icon">🔐</div><div class="bv-feat-text"><div class="bv-feat-title">Perfis com senha</div>Seus dados só seus, no seu celular</div></div>
+  </div>
+  <div class="bv-price">
+    <div class="bv-price-label">Acesso vitalício</div>
+    <div class="bv-price-value">R$ 60,00</div>
+    <div class="bv-price-period">pagamento único · sem mensalidade</div>
+  </div>
+  <button class="btn-comprar" onclick="mostrarTela('telaCompra')">💳 Quero adquirir acesso</button>
+  <button class="btn-tenho-codigo" onclick="mostrarTela('telaCodigo')">Já tenho um código de acesso</button>
+</div>
+
+<!-- CÓDIGO DE ACESSO -->
+<div id="telaCodigo">
+  <div class="codigo-icon">🎟️</div>
+  <div class="codigo-title">Código de acesso</div>
+  <div class="codigo-sub">Digite o código que você recebeu<br>após a confirmação do pagamento</div>
+  <div class="codigo-input-wrap">
+    <input class="codigo-input" id="codigoInput" maxlength="6" placeholder="______" oninput="this.value=this.value.toUpperCase()">
+  </div>
+  <div class="codigo-erro" id="codigoErro"></div>
+  <button class="btn-primary" onclick="validarCodigo()">✓ Validar código</button>
+  <button class="btn-voltar-login" style="margin-top:16px" onclick="mostrarTela('telaBV')">← Voltar</button>
 </div>
 
 <!-- APP -->
@@ -434,6 +537,101 @@
   </div>
 </div>
 
+<!-- TELA COMPRA -->
+<div id="telaCompra">
+  <div style="font-size:40px;margin-bottom:8px">💳</div>
+  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#16a34a;margin-bottom:4px">Adquirir acesso</div>
+  <div style="font-size:13px;color:#5a8a6a;margin-bottom:24px;text-align:center">Siga os passos abaixo para liberar seu acesso</div>
+
+  <div class="pix-steps">
+    <div class="pix-step"><div class="pix-step-num">1</div><div class="pix-step-text">Copie a chave PIX abaixo e faça o pagamento de <strong>R$ 60,00</strong></div></div>
+    <div class="pix-step"><div class="pix-step-num">2</div><div class="pix-step-text">Envie o comprovante via WhatsApp</div></div>
+    <div class="pix-step"><div class="pix-step-num">3</div><div class="pix-step-text">Você receberá seu código de acesso em instantes</div></div>
+    <div class="pix-step"><div class="pix-step-num">4</div><div class="pix-step-text">Volte ao app, toque em "Já tenho um código" e aproveite!</div></div>
+  </div>
+
+  <div class="pix-box">
+    <div class="pix-title">🔑 Chave PIX</div>
+    <div class="pix-sub">Toque no botão para copiar</div>
+    <div id="pixChaveWrap" class="pix-chave-wrap">
+      <div class="pix-chave-texto" id="pixChaveTexto">Carregando...</div>
+      <button class="btn-copiar" onclick="copiarPix()">📋 Copiar</button>
+    </div>
+    <div class="pix-valor">
+      <div class="pix-valor-label">Valor</div>
+      <div class="pix-valor-num">R$ 60,00</div>
+      <div style="font-size:11px;color:#5a8a6a;margin-top:2px">acesso vitalício · pagamento único</div>
+    </div>
+  </div>
+
+  <button class="btn-comprar" onclick="abrirWhatsapp()" style="margin-bottom:10px">💬 Enviar comprovante no WhatsApp</button>
+  <button class="btn-tenho-codigo" onclick="mostrarTela('telaCodigo')">Já tenho meu código de acesso</button>
+  <button class="btn-voltar-login" style="margin-top:16px" onclick="mostrarTela('telaBV')">← Voltar</button>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="telaAdminLogin">
+  <div style="font-size:48px;margin-bottom:12px">🛡️</div>
+  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#16a34a;margin-bottom:4px">Painel Admin</div>
+  <div style="font-size:13px;color:#5a8a6a;margin-bottom:32px">Acesso restrito</div>
+  <div style="width:100%;background:#fff;border-radius:var(--radius);padding:24px;box-shadow:0 8px 30px rgba(22,163,74,.1)">
+    <div class="form-group"><label class="form-label">Senha de administrador</label>
+    <input class="form-input" id="adminSenhaInput" type="password" inputmode="numeric" maxlength="6" placeholder="••••••"></div>
+    <button class="btn-primary" onclick="validarAdmin()">Entrar</button>
+    <div id="adminErro" style="color:#dc2626;font-size:13px;text-align:center;margin-top:10px;min-height:20px"></div>
+  </div>
+  <button class="btn-voltar-login" style="margin-top:20px" onclick="voltarTelaInicial()">← Voltar</button>
+</div>
+
+<!-- PAINEL ADMIN -->
+<div id="telaAdmin">
+  <div class="admin-header">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div class="admin-header-title">🛡️ Painel Admin</div>
+        <div class="admin-header-sub">Carteira — Gestão de acessos</div>
+      </div>
+      <button onclick="voltarTelaInicial()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:20px;padding:6px 14px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer">✕ Sair</button>
+    </div>
+  </div>
+  <div class="admin-body">
+
+    <!-- STATS -->
+    <div class="admin-card">
+      <div class="admin-card-title">📊 Resumo</div>
+      <div class="admin-stat"><div class="admin-stat-label">Códigos disponíveis</div><div class="admin-stat-value" id="adminQtdLivre" style="color:#16a34a">—</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">Códigos usados</div><div class="admin-stat-value" id="adminQtdUsado" style="color:#dc2626">—</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">Total de códigos</div><div class="admin-stat-value" id="adminQtdTotal">—</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">Faturamento estimado</div><div class="admin-stat-value" id="adminFaturamento" style="color:#16a34a">—</div></div>
+    </div>
+
+    <!-- WHATSAPP + PIX CONFIG -->
+    <div class="admin-card">
+      <div class="admin-card-title">💬 Contato & Pagamento</div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Seu WhatsApp (com DDD, só números)</label>
+        <input class="form-input" id="adminWpp" inputmode="numeric" placeholder="Ex: 91999998888">
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Sua chave PIX (aleatória)</label>
+        <input class="form-input" id="adminPix" placeholder="Cole sua chave PIX aqui">
+      </div>
+      <button class="btn-primary" style="margin-top:0" onclick="salvarConfigs()">💾 Salvar configurações</button>
+    </div>
+
+    <!-- CÓDIGOS -->
+    <div class="admin-card">
+      <div class="admin-card-title" style="justify-content:space-between">
+        <span>🎟️ Códigos de acesso</span>
+        <button class="btn-gerar" onclick="gerarNovoCodigo()">+ Gerar novo</button>
+      </div>
+      <div id="adminListaCodigos"></div>
+    </div>
+
+    <button class="btn-admin-sair" onclick="voltarTelaInicial()">← Sair do painel</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -582,9 +780,14 @@ function confirmarImportacaoOk(){
 function sair(){perfilAtivo=null;data={};mostrarTela('telaLogin');renderLogin()}
 function voltarLogin(){mostrarTela('telaLogin');renderLogin()}
 function mostrarTela(id){
-  ['telaLogin','telaSenha','telaCriar','telaApp'].forEach(t=>{
-    document.getElementById(t).style.display=(t===id)?(t==='telaApp'?'block':'flex'):'none'
-  })
+  ['telaBV','telaCompra','telaCodigo','telaAdminLogin','telaAdmin','telaLogin','telaSenha','telaCriar','telaApp'].forEach(t=>{
+    const el=document.getElementById(t);
+    if(el) el.style.display=(t===id)?(t==='telaApp'||t==='telaAdmin'?'block':'flex'):'none'
+  });
+  if(id==='telaCompra'){
+    const pix=localStorage.getItem('admin_pix')||'';
+    document.getElementById('pixChaveTexto').textContent=pix||'Chave não configurada ainda';
+  }
 }
 
 // ── UTILS ──
@@ -1013,8 +1216,150 @@ function deletarReceber(id){if(!confirm('Remover?'))return;data.receber=data.rec
 });
 function fecharModal(id){document.getElementById(id).classList.remove('open')}
 
-mostrarTela('telaLogin');
-renderLogin();
+// ══ CÓDIGOS DE ACESSO ══
+const CODIGOS_VALIDOS = {
+  "CWQH7C": true,
+  "J7IHKU": true,
+  "WYW7SS": true,
+  "WS41Y7": true,
+  "0LI29A": true,
+  "APA51K": true,
+  "VILEEU": true,
+  "MP5358": true,
+  "LWJO9Y": true,
+  "A1IBE4": true,
+};
+
+function temAcesso() {
+  return localStorage.getItem('acesso_liberado') === '1' || localStorage.getItem('admin_acesso') === '1';
+}
+function liberarAdminAcesso() {
+  localStorage.setItem('admin_acesso','1');
+  localStorage.setItem('acesso_liberado','1');
+}
+
+function validarCodigo() {
+  const codigo = document.getElementById('codigoInput').value.trim().toUpperCase();
+  const usados = JSON.parse(localStorage.getItem('codigos_usados') || '[]');
+  if (!codigo) { document.getElementById('codigoErro').textContent = '⚠ Digite o código'; return; }
+  if (!CODIGOS_VALIDOS[codigo]) { document.getElementById('codigoErro').textContent = '❌ Código inválido'; return; }
+  if (usados.includes(codigo)) { document.getElementById('codigoErro').textContent = '❌ Este código já foi utilizado'; return; }
+  usados.push(codigo);
+  localStorage.setItem('codigos_usados', JSON.stringify(usados));
+  localStorage.setItem('acesso_liberado', '1');
+  localStorage.setItem('codigo_usado', codigo);
+  toast('✓ Acesso liberado! Bem-vinda!');
+  setTimeout(() => { mostrarTela('telaLogin'); renderLogin(); }, 1000);
+}
+
+function abrirWhatsapp() {
+  const num = localStorage.getItem('admin_whatsapp') || '';
+  if (!num) { alert('Contato não configurado ainda. Tente novamente em breve.'); return; }
+  const msg = encodeURIComponent('Olá! Vi o app *Carteira* e tenho interesse em adquirir o acesso.\n\nPoderia me passar as instruções para pagamento? 😊');
+  window.open('https://wa.me/55' + num + '?text=' + msg, '_blank');
+}
+
+// ══ ADMIN ══
+const ADMIN_SENHA = '121019';
+
+function abrirAdmin() {
+  document.getElementById('adminSenhaInput').value = '';
+  document.getElementById('adminErro').textContent = '';
+  mostrarTela('telaAdminLogin');
+}
+
+function validarAdmin() {
+  const senha = document.getElementById('adminSenhaInput').value;
+  if (senha === ADMIN_SENHA) {
+    liberarAdminAcesso();
+    mostrarTela('telaAdmin');
+    renderAdmin();
+  } else {
+    document.getElementById('adminErro').textContent = '❌ Senha incorreta';
+  }
+}
+
+function voltarTelaInicial() {
+  if (temAcesso()) { mostrarTela('telaLogin'); renderLogin(); }
+  else mostrarTela('telaBV');
+}
+
+function renderAdmin() {
+  const usados = JSON.parse(localStorage.getItem('codigos_usados') || '[]');
+  const todosOsCodigos = JSON.parse(localStorage.getItem('codigos_extras') || '[]');
+  const baseKeys = Object.keys(CODIGOS_VALIDOS);
+  const todos = [...new Set([...baseKeys, ...todosOsCodigos])];
+  const livre = todos.filter(c => !usados.includes(c)).length;
+  const usado = todos.filter(c => usados.includes(c)).length;
+  document.getElementById('adminQtdLivre').textContent = livre;
+  document.getElementById('adminQtdUsado').textContent = usado;
+  document.getElementById('adminQtdTotal').textContent = todos.length;
+  document.getElementById('adminFaturamento').textContent = 'R$ ' + (usado * 60).toFixed(2).replace('.', ',');
+  const wpp = localStorage.getItem('admin_whatsapp') || '';
+  document.getElementById('adminWpp').value = wpp;
+  const pix = localStorage.getItem('admin_pix') || '';
+  document.getElementById('adminPix').value = pix;
+  const lista = document.getElementById('adminListaCodigos');
+  lista.innerHTML = todos.map(c => {
+    const isUsado = usados.includes(c);
+    return `<div class="codigo-item ${isUsado ? 'usado' : 'livre'}">
+      <div class="codigo-badge">${c}</div>
+      <span class="codigo-status ${isUsado ? 'usado' : 'livre'}">${isUsado ? '✓ Usado' : '● Disponível'}</span>
+    </div>`;
+  }).join('');
+}
+
+function salvarConfigs() {
+  const num = document.getElementById('adminWpp').value.replace(/[^0-9]/g,'');
+  const pix = document.getElementById('adminPix').value.trim();
+  if (!num || num.length < 10) { toast('⚠ Número de WhatsApp inválido'); return; }
+  localStorage.setItem('admin_whatsapp', num);
+  if (pix) localStorage.setItem('admin_pix', pix);
+  toast('✓ Configurações salvas!');
+}
+
+function copiarPix() {
+  const chave = localStorage.getItem('admin_pix') || '';
+  if (!chave) { toast('⚠ Chave PIX não configurada'); return; }
+  navigator.clipboard.writeText(chave).then(() => toast('✓ Chave PIX copiada!')).catch(() => {
+    const el = document.createElement('textarea');
+    el.value = chave; document.body.appendChild(el);
+    el.select(); document.execCommand('copy');
+    document.body.removeChild(el); toast('✓ Chave PIX copiada!');
+  });
+}
+
+function gerarNovoCodigo() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let novo = '';
+  for (let i = 0; i < 6; i++) novo += chars[Math.floor(Math.random() * chars.length)];
+  const extras = JSON.parse(localStorage.getItem('codigos_extras') || '[]');
+  extras.push(novo);
+  localStorage.setItem('codigos_extras', JSON.stringify(extras));
+  // Add to valid codes at runtime
+  CODIGOS_VALIDOS[novo] = true;
+  renderAdmin();
+  toast('✓ Código ' + novo + ' gerado!');
+}
+
+// INIT
+if (temAcesso()) {
+  mostrarTela('telaLogin');
+  renderLogin();
+} else {
+  mostrarTela('telaBV');
+}
+
+// Acesso admin via toque 5x no cadeado
+let toquesCadeado = 0;
+document.querySelector('.login-logo') && document.querySelector('.login-logo').addEventListener('click', () => {
+  toquesCadeado++;
+  if (toquesCadeado >= 5) { toquesCadeado = 0; abrirAdmin(); }
+});
+document.querySelector('.bv-logo') && document.querySelector('.bv-logo').addEventListener('click', () => {
+  toquesCadeado++;
+  if (toquesCadeado >= 5) { toquesCadeado = 0; abrirAdmin(); }
+});
 </script>
 </body>
 </html>
