@@ -141,6 +141,38 @@
   .tab-icon{font-size:16px;display:block;margin-bottom:3px}
 
   .content{padding:16px}
+
+  /* ALERTA VENCIMENTO */
+  .alerta-banner {
+    display:none; margin:0 16px 0;
+    background:linear-gradient(135deg,#dc2626,#b91c1c);
+    border-radius:var(--radius);
+    padding:12px 16px;
+    animation: pulseAlerta 2s infinite;
+    cursor:pointer;
+    box-shadow:0 4px 15px rgba(220,38,38,.3);
+  }
+  @keyframes pulseAlerta {
+    0%,100%{box-shadow:0 4px 15px rgba(220,38,38,.3)}
+    50%{box-shadow:0 4px 25px rgba(220,38,38,.6)}
+  }
+  .alerta-banner-inner { display:flex; align-items:center; gap:10px; }
+  .alerta-icon { font-size:22px; flex-shrink:0; }
+  .alerta-texto { flex:1; }
+  .alerta-titulo { font-family:'Syne',sans-serif; font-weight:800; font-size:13px; color:#fff; }
+  .alerta-sub { font-size:11px; color:rgba(255,255,255,.8); margin-top:2px; }
+  .alerta-arrow { color:rgba(255,255,255,.7); font-size:16px; }
+
+  /* BADGE NA ABA */
+  .tab-badge {
+    display:inline-block; background:#dc2626; color:#fff;
+    font-size:9px; font-weight:800; font-family:'Syne',sans-serif;
+    padding:1px 5px; border-radius:8px; margin-left:4px;
+    vertical-align:middle; line-height:14px;
+  }
+
+  /* BOTÃO WHATSAPP NO CARD */
+  .btn-wpp { background:#25d366; color:#fff; border:none; font-size:11px; font-weight:700; font-family:'Syne',sans-serif; }
   .page{display:none}
   .page.active{display:block}
 
@@ -340,6 +372,17 @@
     </div>
   </div>
 
+  <div class="alerta-banner" id="alertaBanner" onclick="irParaReceber()">
+    <div class="alerta-banner-inner">
+      <div class="alerta-icon">⚠️</div>
+      <div class="alerta-texto">
+        <div class="alerta-titulo" id="alertaTitulo">Cobranças a vencer!</div>
+        <div class="alerta-sub" id="alertaSub">Toque para ver e enviar lembrete</div>
+      </div>
+      <div class="alerta-arrow">›</div>
+    </div>
+  </div>
+
   <div class="content">
 
     <!-- FIXAS -->
@@ -462,6 +505,14 @@
     <div class="form-group"><label class="form-label">Nome da pessoa / empresa</label><input class="form-input" id="recNome" placeholder="Ex: João, Loja XYZ..."></div>
     <div class="form-group"><label class="form-label">Valor total a receber</label><div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="recValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div></div>
     <div class="form-group"><label class="form-label">Motivo (opcional)</label><input class="form-input" id="recMotivo" placeholder="Ex: Serviço prestado, empréstimo..."></div>
+    <div class="form-group">
+      <label class="form-label">WhatsApp da pessoa (com DDD)</label>
+      <div style="position:relative">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px">📱</span>
+        <input class="form-input" id="recFone" inputmode="numeric" placeholder="Ex: 91999998888" style="padding-left:42px">
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Opcional — para envio automático de lembrete</div>
+    </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Data do empréstimo</label><input class="form-input" id="recDataEmp" type="date"></div>
       <div class="form-group"><label class="form-label">Data prevista</label><input class="form-input" id="recVenc" type="date"></div>
@@ -1016,7 +1067,67 @@ function atualizarTotalGeral(){
   (data.dividas||[]).forEach(c=>{const pago=(c.pagamentos||[]).reduce((s,p)=>s+p.valor,0);t+=Math.max(0,c.valorTotal-pago)});
   document.getElementById('totalGeral').textContent=fmt(t);
 }
-function render(){renderFixas();renderDividas();renderReceber();atualizarTotalGeral()}
+
+function verificarAlertasVencimento(){
+  const banner=document.getElementById('alertaBanner');
+  if(!data.receber||!data.receber.length){banner.style.display='none';return;}
+  const hj=new Date(); hj.setHours(0,0,0,0);
+  const urgentes=data.receber.filter(c=>{
+    const rec=(c.recebimentos||[]).reduce((s,r)=>s+r.valor,0);
+    const saldo=Math.max(0,c.valorTotal-rec);
+    if(saldo<=0||!c.venc)return false;
+    const venc=new Date(c.venc+'T00:00:00');
+    const dias=Math.ceil((venc-hj)/(1000*60*60*24));
+    return dias>=0&&dias<=5;
+  });
+  if(urgentes.length){
+    banner.style.display='block';
+    const nomes=urgentes.map(c=>c.nome).join(', ');
+    document.getElementById('alertaTitulo').textContent=urgentes.length===1
+      ?'⚠️ '+urgentes[0].nome+' vence em breve!'
+      :'⚠️ '+urgentes.length+' cobranças vencem em breve!';
+    document.getElementById('alertaSub').textContent='Toque para ver e enviar lembrete via WhatsApp';
+    // Badge na aba
+    const tabReceber=document.querySelectorAll('.tab')[2];
+    if(tabReceber&&!tabReceber.querySelector('.tab-badge')){
+      const badge=document.createElement('span');
+      badge.className='tab-badge'; badge.textContent=urgentes.length;
+      tabReceber.appendChild(badge);
+    }
+  } else {
+    banner.style.display='none';
+    const tabReceber=document.querySelectorAll('.tab')[2];
+    if(tabReceber){const b=tabReceber.querySelector('.tab-badge');if(b)b.remove();}
+  }
+}
+
+function irParaReceber(){
+  showTab('receber');
+}
+
+function enviarWppLembrete(id){
+  const c=data.receber.find(x=>x.id===id);
+  if(!c.fone){toast('⚠ Cadastre o WhatsApp da pessoa para enviar'); return;}
+  const rec=(c.recebimentos||[]).reduce((s,r)=>s+r.valor,0);
+  const saldo=Math.max(0,c.valorTotal-rec);
+  const dataVenc=c.venc?fmtData(c.venc):'em breve';
+  const msg=encodeURIComponent(
+    'Olá, '+c.nome+'! 😊\n\n'+
+    'Passando para lembrar que nosso combinado vence em *'+dataVenc+'*.\n'+
+    'Valor pendente: *'+fmt(saldo)+'*\n\n'+
+    'Qualquer dúvida estou à disposição! 🙏'
+  );
+  window.open('https://wa.me/55'+c.fone+'?text='+msg,'_blank');
+}
+
+function diasParaVencer(venc){
+  if(!venc) return null;
+  const hj=new Date(); hj.setHours(0,0,0,0);
+  const v=new Date(venc+'T00:00:00');
+  return Math.ceil((v-hj)/(1000*60*60*24));
+}
+
+function render(){renderFixas();renderDividas();renderReceber();atualizarTotalGeral();verificarAlertasVencimento()}
 
 // ── CADASTROS ──
 function abrirModalFixa(){
@@ -1076,7 +1187,7 @@ function salvarDivida(){
 function abrirModalReceber(){
   document.getElementById('editReceberId').value='';
   document.getElementById('modalReceberTitulo').textContent='Novo — A Receber';
-  ['recNome','recMotivo','recVenc','recDataEmp'].forEach(id=>document.getElementById(id).value='');
+  ['recNome','recMotivo','recVenc','recDataEmp','recFone'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('recValor').value='';
   document.getElementById('recDataEmp').value=hoje();
   document.getElementById('modalReceber').classList.add('open');
@@ -1089,6 +1200,7 @@ function editarReceber(id){
   document.getElementById('recMotivo').value=c.motivo||'';
   document.getElementById('recVenc').value=c.venc||'';
   document.getElementById('recDataEmp').value=c.dataEmp||'';
+  document.getElementById('recFone').value=c.fone||'';
   document.getElementById('recValor').value=fmt(c.valorTotal).replace('R$ ','');
   document.getElementById('modalReceber').classList.add('open');
 }
@@ -1098,10 +1210,11 @@ function salvarReceber(){
   const motivo=document.getElementById('recMotivo').value.trim();
   const venc=document.getElementById('recVenc').value;
   const dataEmp=document.getElementById('recDataEmp').value;
+  const fone=document.getElementById('recFone').value.replace(/[^0-9]/g,'');
   const editId=document.getElementById('editReceberId').value;
   if(!nome){toast('⚠ Informe o nome');return}if(!valorTotal){toast('⚠ Informe o valor');return}
-  if(editId){const c=data.receber.find(x=>x.id===editId);c.nome=nome;c.valorTotal=valorTotal;c.motivo=motivo;c.venc=venc;c.dataEmp=dataEmp}
-  else data.receber.push({id:uid(),nome,valorTotal,motivo,venc,dataEmp,recebimentos:[]});
+  if(editId){const c=data.receber.find(x=>x.id===editId);c.nome=nome;c.valorTotal=valorTotal;c.motivo=motivo;c.venc=venc;c.dataEmp=dataEmp;c.fone=fone}
+  else data.receber.push({id:uid(),nome,valorTotal,motivo,venc,dataEmp,fone,recebimentos:[]});
   saveDados(perfilAtivo.id,data);fecharModal('modalReceber');render();toast('✓ Salvo!');
 }
 
