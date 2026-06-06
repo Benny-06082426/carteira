@@ -692,6 +692,24 @@
   </div>
 </div>
 
+<!-- MODAL NÚMERO WHATSAPP -->
+<div class="modal-overlay" id="modalFone">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalFone')">✕</button>
+    <div class="modal-title">💬 WhatsApp — <span id="modalFoneNome"></span></div>
+    <input type="hidden" id="modalFoneId">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Informe o número para enviar o lembrete. Será salvo para as próximas cobranças.</p>
+    <div class="form-group">
+      <label class="form-label">Número com DDD</label>
+      <div style="position:relative">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px">📱</span>
+        <input class="form-input" id="modalFoneInput" inputmode="numeric" placeholder="Ex: 91999998888" style="padding-left:42px;font-size:18px;font-weight:700">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="salvarFoneEEnviar()">💾 Salvar e enviar WhatsApp</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1103,11 +1121,31 @@ function verificarAlertasVencimento(){
 
 function irParaReceber(){
   showTab('receber');
+  setTimeout(()=>{
+    // Scroll para o primeiro card urgente
+    const cards=document.querySelectorAll('#listaReceber .card');
+    if(cards.length>0){
+      cards[0].scrollIntoView({behavior:'smooth',block:'start'});
+      cards[0].style.border='2px solid #dc2626';
+      setTimeout(()=>{cards[0].style.border='';},2000);
+    }
+  },200);
 }
 
 function enviarWppLembrete(id){
   const c=data.receber.find(x=>x.id===id);
-  if(!c.fone){toast('⚠ Cadastre o WhatsApp da pessoa para enviar'); return;}
+  if(!c.fone){
+    // Abre modal para cadastrar o número
+    document.getElementById('modalFoneId').value=id;
+    document.getElementById('modalFoneNome').textContent=c.nome;
+    document.getElementById('modalFoneInput').value='';
+    document.getElementById('modalFone').classList.add('open');
+    return;
+  }
+  dispararWpp(c);
+}
+
+function dispararWpp(c){
   const rec=(c.recebimentos||[]).reduce((s,r)=>s+r.valor,0);
   const saldo=Math.max(0,c.valorTotal-rec);
   const dataVenc=c.venc?fmtData(c.venc):'em breve';
@@ -1118,6 +1156,19 @@ function enviarWppLembrete(id){
     'Qualquer dúvida estou à disposição! 🙏'
   );
   window.open('https://wa.me/55'+c.fone+'?text='+msg,'_blank');
+}
+
+function salvarFoneEEnviar(){
+  const id=document.getElementById('modalFoneId').value;
+  const fone=document.getElementById('modalFoneInput').value.replace(/[^0-9]/g,'');
+  if(!fone||fone.length<10){toast('⚠ Número inválido');return;}
+  const c=data.receber.find(x=>x.id===id);
+  c.fone=fone;
+  saveDados(perfilAtivo.id,data);
+  fecharModal('modalFone');
+  render();
+  toast('✓ Número salvo!');
+  setTimeout(()=>dispararWpp(c),300);
 }
 
 function diasParaVencer(venc){
@@ -1333,7 +1384,7 @@ function deletarDivida(id){if(!confirm('Remover?'))return;data.dividas=data.divi
 function deletarReceber(id){if(!confirm('Remover?'))return;data.receber=data.receber.filter(c=>c.id!==id);saveDados(perfilAtivo.id,data);render();toast('Removida')}
 
 // fechar modal ao clicar fora
-['modalFixa','modalDivida','modalReceber','modalPagFixa','modalPagDivida','modalRecebimento','modalHist','modalImportar'].forEach(id=>{
+['modalFixa','modalDivida','modalReceber','modalPagFixa','modalPagDivida','modalRecebimento','modalHist','modalImportar','modalFone'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){if(e.target===this)fecharModal(id)})
 });
 function fecharModal(id){document.getElementById(id).classList.remove('open')}
