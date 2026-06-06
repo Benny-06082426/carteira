@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Carteira</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f0f7f2;--surface:#ffffff;--surface2:#e8f5ee;--surface3:#d4eddf;
+    --border:#b8ddc8;--text:#1a2e22;--muted:#5a8a6a;
+    --accent:#16a34a;--accent2:#0891b2;--warn:#dc2626;--yellow:#d97706;--purple:#7c3aed;
+    --radius:16px;--radius-sm:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden}
+
+  /* LOGIN */
+  #telaLogin{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee 0%,#f0fdf4 60%,#dcfce7 100%)}
+  .login-logo{font-size:48px;margin-bottom:8px}
+  .login-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#16a34a;margin-bottom:4px;text-shadow:0 2px 8px rgba(22,163,74,.2)}
+  .login-sub{font-size:13px;color:var(--muted);margin-bottom:40px}
+  .login-box{width:100%;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px;margin-bottom:16px;box-shadow:0 8px 30px rgba(22,163,74,.1)}
+  .login-box-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:16px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .perfil-btn{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;cursor:pointer;flex:1;box-shadow:0 2px 8px rgba(22,163,74,.08)}
+  .perfil-btn:active{border-color:var(--accent)}
+  .perfil-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .perfil-info{text-align:left}
+  .perfil-nome{font-family:'Syne',sans-serif;font-weight:700;font-size:15px}
+  .perfil-hint{font-size:11px;color:var(--muted);margin-top:2px}
+  .btn-novo-perfil{width:100%;background:none;border:1px dashed var(--border);color:var(--muted);border-radius:var(--radius-sm);padding:12px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px}
+
+  /* SENHA */
+  #telaSenha{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee 0%,#f0fdf4 60%,#dcfce7 100%)}
+  .senha-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:12px}
+  .senha-nome{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:4px}
+  .senha-sub{font-size:13px;color:var(--muted);margin-bottom:32px}
+  .senha-dots{display:flex;gap:16px;justify-content:center;margin-bottom:32px}
+  .senha-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:all .2s}
+  .senha-dot.filled{background:#16a34a;border-color:#16a34a;box-shadow:0 0 8px rgba(22,163,74,.5)}
+  .teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px}
+  .tecla{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 0;text-align:center;font-family:'Syne',sans-serif;font-weight:700;font-size:22px;cursor:pointer;user-select:none;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+  .tecla:active{background:var(--surface3)}
+  .tecla.apagar{font-size:18px;color:var(--muted)}
+  .tecla.vazio{background:transparent;border-color:transparent;pointer-events:none}
+  .erro-senha{color:var(--warn);font-size:13px;text-align:center;margin-top:16px;min-height:20px}
+  .btn-voltar-login{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;margin-top:20px;text-decoration:underline}
+
+  /* CRIAR */
+  #telaCriar{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee 0%,#f0fdf4 60%,#dcfce7 100%)}
+  .criar-title{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;margin-bottom:6px}
+  .criar-sub{font-size:13px;color:var(--muted);margin-bottom:32px;text-align:center}
+  .emoji-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
+  .emoji-opt{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:10px 0;text-align:center;font-size:24px;cursor:pointer}
+  .emoji-opt.sel{border-color:#16a34a;background:#dcfce7}
+  .criar-form{width:100%}
+
+  /* BOAS VINDAS */
+  #telaBV{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee 0%,#f0fdf4 60%,#dcfce7 100%)}
+  .bv-logo{font-size:56px;margin-bottom:12px}
+  .bv-title{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#16a34a;margin-bottom:6px;text-align:center}
+  .bv-sub{font-size:14px;color:#5a8a6a;margin-bottom:32px;text-align:center;line-height:1.6}
+  .bv-features{width:100%;background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:28px;box-shadow:0 4px 20px rgba(22,163,74,.1)}
+  .bv-feature{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e8f5ee}
+  .bv-feature:last-child{border-bottom:none}
+  .bv-feat-icon{font-size:22px;flex-shrink:0}
+  .bv-feat-text{font-size:13px;color:#1a2e22}
+  .bv-feat-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px}
+  .bv-price{width:100%;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:20px;box-shadow:0 4px 20px rgba(22,163,74,.3)}
+  .bv-price-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.8);margin-bottom:4px}
+  .bv-price-value{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#fff}
+  .bv-price-period{font-size:12px;color:rgba(255,255,255,.8)}
+  .btn-comprar{width:100%;background:#fff;color:#16a34a;border:none;border-radius:var(--radius-sm);padding:14px;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:12px;box-shadow:0 4px 15px rgba(22,163,74,.2)}
+  .btn-tenho-codigo{width:100%;background:none;border:2px solid rgba(22,163,74,.4);color:#16a34a;border-radius:var(--radius-sm);padding:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+
+  /* ADMIN */
+  #telaAdmin{min-height:100vh;display:none;flex-direction:column;padding:0;background:#f0f7f2;overflow-y:auto}
+  .admin-header{background:linear-gradient(135deg,#16a34a,#15803d);padding:40px 24px 24px;color:#fff}
+  .admin-header-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:2px}
+  .admin-header-sub{font-size:13px;opacity:.8}
+  .admin-body{padding:20px}
+  .admin-card{background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(22,163,74,.08);border:1px solid #b8ddc8}
+  .admin-card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#16a34a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .admin-stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e8f5ee}
+  .admin-stat:last-child{border-bottom:none}
+  .admin-stat-label{font-size:13px;color:#5a8a6a}
+  .admin-stat-value{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#1a2e22}
+  .codigo-item{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:8px;border:1px solid #b8ddc8}
+  .codigo-item.livre{background:#f0fdf4}
+  .codigo-item.usado{background:#fef2f2;border-color:#fecaca;opacity:.7}
+  .codigo-badge{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;letter-spacing:2px}
+  .codigo-status{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px}
+  .codigo-status.livre{background:#dcfce7;color:#16a34a}
+  .codigo-status.usado{background:#fee2e2;color:#dc2626}
+  .btn-admin-sair{width:100%;background:none;border:2px solid #fecaca;color:#dc2626;border-radius:var(--radius-sm);padding:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px}
+  .btn-gerar{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 16px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(22,163,74,.3)}
+
+  /* TELA COMPRA */
+  #telaCompra{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee 0%,#f0fdf4 60%,#dcfce7 100%)}
+  .pix-box{width:100%;background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:0 4px 20px rgba(22,163,74,.1);border:2px solid #b8ddc8}
+  .pix-title{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#16a34a;margin-bottom:4px}
+  .pix-sub{font-size:12px;color:#5a8a6a;margin-bottom:16px}
+  .pix-chave-wrap{background:#f0fdf4;border:2px dashed #16a34a;border-radius:var(--radius-sm);padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .pix-chave-texto{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#1a2e22;word-break:break-all}
+  .btn-copiar{background:#16a34a;color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 14px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
+  .pix-valor{text-align:center;margin:16px 0}
+  .pix-valor-label{font-size:11px;color:#5a8a6a;text-transform:uppercase;letter-spacing:.5px}
+  .pix-valor-num{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;color:#16a34a}
+  .pix-steps{width:100%;background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(22,163,74,.08)}
+  .pix-step{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #e8f5ee}
+  .pix-step:last-child{border-bottom:none}
+  .pix-step-num{width:24px;height:24px;border-radius:50%;background:#16a34a;color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .pix-step-text{font-size:13px;color:#1a2e22;padding-top:3px}
+
+  /* TELA ADMIN LOGIN */
+  #telaAdminLogin{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee,#f0fdf4,#dcfce7)}
+
+  /* TELA CÓDIGO */
+  #telaCodigo{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;background:linear-gradient(160deg,#e8f5ee 0%,#f0fdf4 60%,#dcfce7 100%)}
+  .codigo-icon{font-size:48px;margin-bottom:12px}
+  .codigo-title{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#1a2e22;margin-bottom:6px}
+  .codigo-sub{font-size:13px;color:#5a8a6a;margin-bottom:28px;text-align:center}
+  .codigo-input-wrap{width:100%;position:relative;margin-bottom:8px}
+  .codigo-input{width:100%;background:#fff;border:3px solid #b8ddc8;color:#1a2e22;padding:16px 14px;border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:22px;font-weight:800;text-align:center;letter-spacing:4px;text-transform:uppercase}
+  .codigo-input:focus{outline:none;border-color:#16a34a}
+  .codigo-erro{color:#dc2626;font-size:13px;text-align:center;min-height:20px;margin-bottom:12px}
+
+  /* APP */
+  #telaApp{display:none}
+  .app-header{background:var(--surface);padding:16px 20px 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(22,163,74,.1)}
+  .header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .header-left{display:flex;align-items:center;gap:10px}
+  .header-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .app-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#16a34a}
+  .total-badge{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--muted);font-weight:600}
+  .total-badge span{color:#dc2626;font-weight:800;font-size:12px}
+  .btn-sair{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;padding:2px 6px}
+  .tabs{display:flex;gap:2px}
+  .tab{flex:1;padding:10px 2px;text-align:center;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase;user-select:none}
+  .tab.active{color:#16a34a;border-bottom-color:#16a34a;font-weight:800}
+  .tab-icon{font-size:16px;display:block;margin-bottom:3px}
+
+  .content{padding:16px}
+
+  /* ALERTA VENCIMENTO */
+  .alerta-banner {
+    display:none; margin:0 16px 0;
+    background:linear-gradient(135deg,#dc2626,#b91c1c);
+    border-radius:var(--radius);
+    padding:12px 16px;
+    animation: pulseAlerta 2s infinite;
+    cursor:pointer;
+    box-shadow:0 4px 15px rgba(220,38,38,.3);
+  }
+  @keyframes pulseAlerta {
+    0%,100%{box-shadow:0 4px 15px rgba(220,38,38,.3)}
+    50%{box-shadow:0 4px 25px rgba(220,38,38,.6)}
+  }
+  .alerta-banner-inner { display:flex; align-items:center; gap:10px; }
+  .alerta-icon { font-size:22px; flex-shrink:0; }
+  .alerta-texto { flex:1; }
+  .alerta-titulo { font-family:'Syne',sans-serif; font-weight:800; font-size:13px; color:#fff; }
+  .alerta-sub { font-size:11px; color:rgba(255,255,255,.8); margin-top:2px; }
+  .alerta-arrow { color:rgba(255,255,255,.7); font-size:16px; }
+
+  /* BADGE NA ABA */
+  .tab-badge {
+    display:inline-block; background:#dc2626; color:#fff;
+    font-size:9px; font-weight:800; font-family:'Syne',sans-serif;
+    padding:1px 5px; border-radius:8px; margin-left:4px;
+    vertical-align:middle; line-height:14px;
+  }
+
+  /* BOTÃO WHATSAPP NO CARD */
+  .btn-wpp { background:#25d366; color:#fff; border:none; font-size:11px; font-weight:700; font-family:'Syne',sans-serif; }
+  .page{display:none}
+  .page.active{display:block}
+
+  .summary-card{background:linear-gradient(135deg,#16a34a,#15803d);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(22,163,74,.3)}
+  .summary-card::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:var(--accent);opacity:.05}
+  .summary-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.75);margin-bottom:6px}
+  .summary-value{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff}
+  .summary-value.red{color:#fff}
+  .summary-value.green{color:#fff}
+  .summary-row{display:flex;gap:10px;margin-top:12px}
+  .summary-mini{flex:1;background:rgba(255,255,255,.2);border-radius:var(--radius-sm);padding:10px;text-align:center;backdrop-filter:blur(4px)}
+  .summary-mini .val{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;margin-top:3px;color:#fff}
+
+  .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;margin-top:8px}
+  .section-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+  .btn-add{background:var(--accent);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(22,163,74,.3)}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(22,163,74,.08)}
+  .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+  .card-name{font-family:'Syne',sans-serif;font-weight:700;font-size:15px}
+  .card-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .card-tag{font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:10px;flex-shrink:0}
+  .tag-fixo{background:#e0f2fe;color:#0369a1;font-weight:700}
+  .tag-divida{background:#fce7f3;color:#be185d;font-weight:700}
+  .tag-receber{background:#dcfce7;color:#15803d;font-weight:700}
+
+  .progress-wrap{margin:10px 0 6px}
+  .progress-bg{background:#d1fae5;border-radius:4px;height:8px;overflow:hidden}
+  .progress-fill{height:100%;border-radius:4px;transition:width .4s}
+  .progress-fill.green{background:linear-gradient(90deg,#16a34a,#4ade80)}
+  .progress-fill.yellow{background:var(--yellow)}
+  .progress-fill.red{background:var(--warn)}
+  .progress-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px}
+
+  .card-values{display:flex;justify-content:space-between}
+  .cv{text-align:center}
+  .cv-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px}
+  .cv-value{font-family:'Syne',sans-serif;font-weight:700;font-size:13px}
+  .cv-value.red{color:var(--warn)}
+  .cv-value.green{color:var(--accent)}
+
+  .divider{height:1px;background:var(--border);margin:10px 0}
+  .card-actions{display:flex;gap:8px}
+  .btn-sm{flex:1;padding:8px;border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;border:none;cursor:pointer}
+  .btn-sm:active{opacity:.7}
+  .btn-pay{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;box-shadow:0 2px 8px rgba(22,163,74,.3)}
+  .btn-receber{background:#dcfce7;color:#15803d;border:2px solid #16a34a;font-weight:700}
+  .btn-hist{background:var(--surface2);color:var(--text);border:1px solid var(--border);font-weight:600}
+  .btn-edit{background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;font-weight:600}
+  .btn-del{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;max-width:40px}
+
+  .badge-quitado{background:#16a34a;color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 10px;border-radius:10px;box-shadow:0 2px 6px rgba(22,163,74,.3)}
+  .lembrete-tag{display:inline-block;background:#fef3c7;color:#d97706;border:1px solid #fcd34d;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:4px}
+
+  .mes-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:16px}
+  .mes-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:18px;cursor:pointer;padding:4px 12px;border-radius:var(--radius-sm)}
+  .mes-label{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;min-width:80px;text-align:center;color:var(--muted)}
+
+  .fixo-row{display:flex;justify-content:space-between;align-items:center}
+  .fixo-valor{font-family:'Syne',sans-serif;font-weight:700;font-size:20px}
+
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+  .modal-overlay.open{display:flex}
+  .modal{background:#fff;border-radius:var(--radius) var(--radius) 0 0;padding:24px 20px 36px;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;border-top:3px solid var(--accent);animation:slideUp .25s ease;box-shadow:0 -8px 40px rgba(22,163,74,.15)}
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;margin-bottom:20px}
+  .modal-close{float:right;background:var(--surface3);border:none;color:var(--muted);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;line-height:28px;text-align:center}
+
+  .form-group{margin-bottom:14px}
+  .form-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px;display:block}
+  .form-input{width:100%;background:#fff;border:2px solid var(--border);color:var(--text);padding:12px 14px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:16px;appearance:none;transition:border-color .2s}
+  .form-input:focus{outline:none;border-color:var(--accent)}
+  .money-input-wrap{position:relative}
+  .money-prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;font-weight:600;pointer-events:none}
+  .form-input.money{padding-left:42px;font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--accent)}
+  .btn-primary{width:100%;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:none;border-radius:var(--radius-sm);padding:14px;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;box-shadow:0 4px 15px rgba(22,163,74,.35)}
+  .btn-primary:active{opacity:.85}
+  .form-row{display:flex;gap:10px}
+  .form-row .form-group{flex:1}
+
+  .hist-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+  .hist-item:last-child{border-bottom:none}
+  .hist-date{font-size:11px;color:var(--muted);margin-top:2px}
+  .hist-desc{font-size:13px;font-weight:500}
+  .hist-val{font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);font-size:15px}
+  .hist-del{background:none;border:none;color:var(--warn);font-size:16px;cursor:pointer;padding:4px}
+
+  .empty{text-align:center;padding:40px 20px;color:var(--muted)}
+  .empty-icon{font-size:38px;margin-bottom:10px;display:block}
+  .empty-text{font-size:13px}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#16a34a;border:none;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;pointer-events:none;box-shadow:0 4px 15px rgba(22,163,74,.4)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .scrollable{overflow-y:auto;max-height:320px}
+
+  /* valor variável */
+  .valor-mes-badge{font-size:10px;color:#d97706;background:#fef3c7;border:1px solid #fcd34d;padding:2px 7px;border-radius:8px;margin-top:3px;display:inline-block}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="telaLogin">
+  <div class="login-logo">🔒</div>
+  <div class="login-title">Carteira</div>
+  <div class="login-sub">Selecione seu perfil</div>
+  <div class="login-box">
+    <div class="login-box-title">Perfis cadastrados</div>
+    <div id="listaPerfis"><div class="empty" style="padding:20px 0"><span class="empty-icon" style="font-size:28px">👤</span><div class="empty-text">Nenhum perfil ainda</div></div></div>
+    <button class="btn-novo-perfil" onclick="irCriar()">+ Criar novo perfil</button>
+  </div>
+</div>
+
+<!-- SENHA -->
+<div id="telaSenha">
+  <div class="senha-avatar" id="senhaAvatar"></div>
+  <div class="senha-nome" id="senhaNome"></div>
+  <div class="senha-sub">Digite sua senha de 4 dígitos</div>
+  <div class="senha-dots">
+    <div class="senha-dot" id="d0"></div><div class="senha-dot" id="d1"></div>
+    <div class="senha-dot" id="d2"></div><div class="senha-dot" id="d3"></div>
+  </div>
+  <div class="teclado">
+    <div class="tecla" onclick="tecla('1')">1</div><div class="tecla" onclick="tecla('2')">2</div><div class="tecla" onclick="tecla('3')">3</div>
+    <div class="tecla" onclick="tecla('4')">4</div><div class="tecla" onclick="tecla('5')">5</div><div class="tecla" onclick="tecla('6')">6</div>
+    <div class="tecla" onclick="tecla('7')">7</div><div class="tecla" onclick="tecla('8')">8</div><div class="tecla" onclick="tecla('9')">9</div>
+    <div class="tecla vazio"></div><div class="tecla" onclick="tecla('0')">0</div><div class="tecla apagar" onclick="apagarTecla()">⌫</div>
+  </div>
+  <div class="erro-senha" id="erroSenha"></div>
+  <button class="btn-voltar-login" onclick="voltarLogin()">← Trocar perfil</button>
+</div>
+
+<!-- CRIAR PERFIL -->
+<div id="telaCriar">
+  <div class="criar-title">Novo perfil</div>
+  <div class="criar-sub">Escolha um emoji e crie sua senha</div>
+  <div class="emoji-grid" id="emojiGrid"></div>
+  <div class="criar-form">
+    <div class="form-group"><label class="form-label">Seu nome</label><input class="form-input" id="criarNome" placeholder="Ex: Cris, João..."></div>
+    <div class="form-group"><label class="form-label">Senha de 4 dígitos</label><input class="form-input" id="criarSenha" type="password" inputmode="numeric" maxlength="4" placeholder="••••"></div>
+    <button class="btn-primary" onclick="salvarPerfil()">Criar perfil</button>
+    <button class="btn-voltar-login" style="display:block;text-align:center;margin-top:12px" onclick="voltarLogin()">← Voltar</button>
+  </div>
+</div>
+
+<!-- BOAS VINDAS -->
+<div id="telaBV">
+  <div class="bv-logo">🔒</div>
+  <div class="bv-title">Carteira</div>
+  <div class="bv-sub">Controle suas finanças com<br>simplicidade e privacidade</div>
+  <div class="bv-features">
+    <div class="bv-feature"><div class="bv-feat-icon">🏠</div><div class="bv-feat-text"><div class="bv-feat-title">Contas Fixas</div>Acompanhe energia, aluguel e mais</div></div>
+    <div class="bv-feature"><div class="bv-feat-icon">📌</div><div class="bv-feat-text"><div class="bv-feat-title">Dívidas & Financiamentos</div>Controle o saldo de cada dívida</div></div>
+    <div class="bv-feature"><div class="bv-feat-icon">💰</div><div class="bv-feat-text"><div class="bv-feat-title">A Receber</div>Nunca esqueça quem te deve</div></div>
+    <div class="bv-feature"><div class="bv-feat-icon">🔐</div><div class="bv-feat-text"><div class="bv-feat-title">Perfis com senha</div>Seus dados só seus, no seu celular</div></div>
+  </div>
+  <div class="bv-price">
+    <div class="bv-price-label">Acesso vitalício</div>
+    <div class="bv-price-value">R$ 60,00</div>
+    <div class="bv-price-period">pagamento único · sem mensalidade</div>
+  </div>
+  <button class="btn-comprar" onclick="mostrarTela('telaCompra')">💳 Quero adquirir acesso</button>
+  <button class="btn-tenho-codigo" onclick="mostrarTela('telaCodigo')">Já tenho um código de acesso</button>
+</div>
+
+<!-- CÓDIGO DE ACESSO -->
+<div id="telaCodigo">
+  <div class="codigo-icon">🎟️</div>
+  <div class="codigo-title">Código de acesso</div>
+  <div class="codigo-sub">Digite o código que você recebeu<br>após a confirmação do pagamento</div>
+  <div class="codigo-input-wrap">
+    <input class="codigo-input" id="codigoInput" maxlength="6" placeholder="______" oninput="this.value=this.value.toUpperCase()">
+  </div>
+  <div class="codigo-erro" id="codigoErro"></div>
+  <button class="btn-primary" onclick="validarCodigo()">✓ Validar código</button>
+  <button class="btn-voltar-login" style="margin-top:16px" onclick="mostrarTela('telaBV')">← Voltar</button>
+</div>
+
+<!-- APP -->
+<div id="telaApp">
+  <div class="app-header">
+    <div class="header-top">
+      <div class="header-left">
+        <div class="header-avatar" id="appAvatar"></div>
+        <div class="app-title" id="appNome">Carteira</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="total-badge">A pagar: <span id="totalGeral">R$ 0</span></div>
+        <button class="btn-sair" onclick="sair()">Sair</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('fixas')"><span class="tab-icon">🏠</span>Fixas</div>
+      <div class="tab" onclick="showTab('dividas')"><span class="tab-icon">📌</span>Dívidas</div>
+      <div class="tab" onclick="showTab('receber')"><span class="tab-icon">💰</span>A Receber</div>
+    </div>
+  </div>
+
+  <div class="alerta-banner" id="alertaBanner" onclick="irParaReceber()">
+    <div class="alerta-banner-inner">
+      <div class="alerta-icon">⚠️</div>
+      <div class="alerta-texto">
+        <div class="alerta-titulo" id="alertaTitulo">Cobranças a vencer!</div>
+        <div class="alerta-sub" id="alertaSub">Toque para ver e enviar lembrete</div>
+      </div>
+      <div class="alerta-arrow">›</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- FIXAS -->
+    <div class="page active" id="page-fixas">
+      <div class="mes-nav">
+        <button class="mes-btn" onclick="mudaMes(-1)">‹</button>
+        <div class="mes-label" id="mesLabel">—</div>
+        <button class="mes-btn" onclick="mudaMes(1)">›</button>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Total do mês</div>
+        <div class="summary-value red" id="totalFixas">R$ 0,00</div>
+        <div class="summary-row">
+          <div class="summary-mini"><div class="summary-label">✓ Pagas</div><div class="val green" id="fixasPagas">R$ 0,00</div></div>
+          <div class="summary-mini"><div class="summary-label">⏳ Pendentes</div><div class="val red" id="fixasPendentes">R$ 0,00</div></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div class="section-title">Contas pendentes</div>
+        <button class="btn-add" onclick="abrirModalFixa()">+ Nova</button>
+      </div>
+      <div id="listaFixas"></div>
+      <div id="secaoFixasPagas" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 12px;cursor:pointer" onclick="togglePagas()">
+          <div class="section-title" style="color:var(--accent)">✓ Já pagas este mês</div>
+          <span id="togglePagasIcon" style="color:var(--muted);font-size:12px">▼ mostrar</span>
+        </div>
+        <div id="listaFixasPagas" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- DÍVIDAS -->
+    <div class="page" id="page-dividas">
+      <div class="summary-card">
+        <div class="summary-label">Total em aberto</div>
+        <div class="summary-value red" id="totalDividas">R$ 0,00</div>
+        <div class="summary-row">
+          <div class="summary-mini"><div class="summary-label">✓ Pago</div><div class="val green" id="dividasPago">R$ 0,00</div></div>
+          <div class="summary-mini"><div class="summary-label">📋 Contas</div><div class="val" style="color:var(--yellow)" id="dividasQtd">0</div></div>
+        </div>
+      </div>
+      <div class="section-header">
+        <div class="section-title">Em aberto</div>
+        <button class="btn-add" onclick="abrirModalDivida()">+ Nova</button>
+      </div>
+      <div id="listaDividas"></div>
+      <div id="secaoDividasQuitadas" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 12px;cursor:pointer" onclick="toggleQuitadas()">
+          <div class="section-title" style="color:var(--accent)">✓ Quitadas</div>
+          <span id="toggleQuitadasIcon" style="color:var(--muted);font-size:12px">▼ mostrar</span>
+        </div>
+        <div id="listaDividasQuitadas" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- A RECEBER -->
+    <div class="page" id="page-receber">
+      <div class="summary-card" style="background:linear-gradient(135deg,#15803d,#166534)">
+        <div class="summary-label">Total a receber</div>
+        <div class="summary-value green" id="totalReceber">R$ 0,00</div>
+        <div class="summary-row">
+          <div class="summary-mini"><div class="summary-label">✓ Recebido</div><div class="val green" id="receberRecebido">R$ 0,00</div></div>
+          <div class="summary-mini"><div class="summary-label">⏳ Pendente</div><div class="val" style="color:var(--yellow)" id="receberQtd">0</div></div>
+        </div>
+      </div>
+      <div class="section-header">
+        <div class="section-title">Em aberto</div>
+        <button class="btn-add" onclick="abrirModalReceber()">+ Novo</button>
+      </div>
+      <div id="listaReceber"></div>
+      <div id="secaoReceberQuitados" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 12px;cursor:pointer" onclick="toggleReceberQuitados()">
+          <div class="section-title" style="color:var(--accent)">✓ Recebidos</div>
+          <span id="toggleReceberQuitadosIcon" style="color:var(--muted);font-size:12px">▼ mostrar</span>
+        </div>
+        <div id="listaReceberQuitados" style="display:none"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL CONTA FIXA -->
+<div class="modal-overlay" id="modalFixa">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalFixa')">✕</button>
+    <div class="modal-title" id="modalFixaTitulo">Nova conta fixa</div>
+    <input type="hidden" id="editFixaId">
+    <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="fixaNome" placeholder="Ex: Energia, Aluguel..."></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Valor padrão (R$)</label>
+        <div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="fixaValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Vence dia</label><input class="form-input" id="fixaDia" type="number" placeholder="10" min="1" max="31" inputmode="numeric"></div>
+    </div>
+    <button class="btn-primary" onclick="salvarFixa()">Salvar</button>
+  </div>
+</div>
+
+<!-- MODAL DÍVIDA -->
+<div class="modal-overlay" id="modalDivida">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalDivida')">✕</button>
+    <div class="modal-title" id="modalDividaTitulo">Nova dívida</div>
+    <input type="hidden" id="editDividaId">
+    <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="divNome" placeholder="Ex: Moto, Loja ABC..."></div>
+    <div class="form-group"><label class="form-label">Valor total da dívida</label><div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="divValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div></div>
+    <div class="form-group"><label class="form-label">Observação (opcional)</label><input class="form-input" id="divObs" placeholder="Ex: Financiamento, empréstimo..."></div>
+    <button class="btn-primary" onclick="salvarDivida()">Salvar</button>
+  </div>
+</div>
+
+<!-- MODAL A RECEBER -->
+<div class="modal-overlay" id="modalReceber">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalReceber')">✕</button>
+    <div class="modal-title" id="modalReceberTitulo">Novo — A Receber</div>
+    <input type="hidden" id="editReceberId">
+    <div class="form-group"><label class="form-label">Nome da pessoa / empresa</label><input class="form-input" id="recNome" placeholder="Ex: João, Loja XYZ..."></div>
+    <div class="form-group"><label class="form-label">Valor total a receber</label><div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="recValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div></div>
+    <div class="form-group"><label class="form-label">Motivo (opcional)</label><input class="form-input" id="recMotivo" placeholder="Ex: Serviço prestado, empréstimo..."></div>
+    <div class="form-group">
+      <label class="form-label">WhatsApp da pessoa (com DDD)</label>
+      <div style="position:relative">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px">📱</span>
+        <input class="form-input" id="recFone" inputmode="numeric" placeholder="Ex: 91999998888" style="padding-left:42px">
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Opcional — para envio automático de lembrete</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Data do empréstimo</label><input class="form-input" id="recDataEmp" type="date"></div>
+      <div class="form-group"><label class="form-label">Data prevista</label><input class="form-input" id="recVenc" type="date"></div>
+    </div>
+    <button class="btn-primary" onclick="salvarReceber()">Salvar</button>
+  </div>
+</div>
+
+<!-- MODAL PAGAR FIXA (com valor variável) -->
+<div class="modal-overlay" id="modalPagFixa">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalPagFixa')">✕</button>
+    <div class="modal-title" id="modalPagFixaTitulo">Pagar conta</div>
+    <input type="hidden" id="pagFixaId">
+    <div class="form-group"><label class="form-label">Data do pagamento</label><input class="form-input" id="pagFixaData" type="date"></div>
+    <div class="form-group">
+      <label class="form-label">Valor pago este mês</label>
+      <div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="pagFixaValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px">O valor pode ser diferente do padrão</div>
+    </div>
+    <button class="btn-primary" onclick="confirmarPagFixa()">✓ Confirmar pagamento</button>
+  </div>
+</div>
+
+<!-- MODAL PAGAR DÍVIDA -->
+<div class="modal-overlay" id="modalPagDivida">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalPagDivida')">✕</button>
+    <div class="modal-title" id="modalPagDividaTitulo">Registrar pagamento</div>
+    <input type="hidden" id="pagDividaId">
+    <div class="form-group"><label class="form-label">Data</label><input class="form-input" id="pagDividaData" type="date"></div>
+    <div class="form-group"><label class="form-label">Valor pago</label><div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="pagDividaValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div></div>
+    <div class="form-group"><label class="form-label">Observação (opcional)</label><input class="form-input" id="pagDividaObs" placeholder="Ex: PIX, dinheiro..."></div>
+    <button class="btn-primary" onclick="confirmarPagDivida()">✓ Confirmar</button>
+  </div>
+</div>
+
+<!-- MODAL RECEBIMENTO -->
+<div class="modal-overlay" id="modalRecebimento">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalRecebimento')">✕</button>
+    <div class="modal-title" id="modalRecTitle">Registrar recebimento</div>
+    <input type="hidden" id="recPagId">
+    <div class="form-group"><label class="form-label">Data do recebimento</label><input class="form-input" id="recPagData" type="date"></div>
+    <div class="form-group"><label class="form-label">Valor recebido</label><div class="money-input-wrap"><span class="money-prefix">R$</span><input class="form-input money" id="recPagValor" inputmode="numeric" placeholder="0,00" oninput="mascaraMoeda(this)"></div></div>
+    <div class="form-group"><label class="form-label">Observação (opcional)</label><input class="form-input" id="recPagObs" placeholder="Ex: PIX, dinheiro..."></div>
+    <button class="btn-primary" onclick="confirmarRecebimento()">✓ Confirmar</button>
+  </div>
+</div>
+
+<!-- MODAL HISTÓRICO -->
+<div class="modal-overlay" id="modalHist">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalHist')">✕</button>
+    <div class="modal-title" id="modalHistTitle">Histórico</div>
+    <div class="scrollable" id="modalHistContent"></div>
+  </div>
+</div>
+
+<!-- MODAL IMPORTAR -->
+<div class="modal-overlay" id="modalImportar">
+  <div class="modal">
+    <div class="modal-title">📦 Importar dados anteriores</div>
+    <p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:20px">Encontramos dados salvos de uma versão anterior. Quer importar tudo para este perfil?</p>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:20px">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase">Será importado</div>
+      <div style="font-size:13px;display:flex;flex-direction:column;gap:6px">
+        <div>🏠 Contas fixas</div><div>📌 Dívidas e pagamentos</div><div>💰 Contas a receber</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="confirmarImportacaoOk()">✓ Importar meus dados</button>
+    <button style="width:100%;background:none;border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-sm);padding:12px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px" onclick="fecharModal('modalImportar')">Não, obrigada</button>
+  </div>
+</div>
+
+<!-- TELA COMPRA -->
+<div id="telaCompra">
+  <div style="font-size:40px;margin-bottom:8px">💳</div>
+  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#16a34a;margin-bottom:4px">Adquirir acesso</div>
+  <div style="font-size:13px;color:#5a8a6a;margin-bottom:24px;text-align:center">Siga os passos abaixo para liberar seu acesso</div>
+
+  <div class="pix-steps">
+    <div class="pix-step"><div class="pix-step-num">1</div><div class="pix-step-text">Copie a chave PIX abaixo e faça o pagamento de <strong>R$ 60,00</strong></div></div>
+    <div class="pix-step"><div class="pix-step-num">2</div><div class="pix-step-text">Envie o comprovante via WhatsApp</div></div>
+    <div class="pix-step"><div class="pix-step-num">3</div><div class="pix-step-text">Você receberá seu código de acesso em instantes</div></div>
+    <div class="pix-step"><div class="pix-step-num">4</div><div class="pix-step-text">Volte ao app, toque em "Já tenho um código" e aproveite!</div></div>
+  </div>
+
+  <div class="pix-box">
+    <div class="pix-title">🔑 Chave PIX</div>
+    <div class="pix-sub">Toque no botão para copiar</div>
+    <div id="pixChaveWrap" class="pix-chave-wrap">
+      <div class="pix-chave-texto" id="pixChaveTexto">Carregando...</div>
+      <button class="btn-copiar" onclick="copiarPix()">📋 Copiar</button>
+    </div>
+    <div class="pix-valor">
+      <div class="pix-valor-label">Valor</div>
+      <div class="pix-valor-num">R$ 60,00</div>
+      <div style="font-size:11px;color:#5a8a6a;margin-top:2px">acesso vitalício · pagamento único</div>
+    </div>
+  </div>
+
+  <button class="btn-comprar" onclick="abrirWhatsapp()" style="margin-bottom:10px">💬 Enviar comprovante no WhatsApp</button>
+  <button class="btn-tenho-codigo" onclick="mostrarTela('telaCodigo')">Já tenho meu código de acesso</button>
+  <button class="btn-voltar-login" style="margin-top:16px" onclick="mostrarTela('telaBV')">← Voltar</button>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="telaAdminLogin">
+  <div style="font-size:48px;margin-bottom:12px">🛡️</div>
+  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#16a34a;margin-bottom:4px">Painel Admin</div>
+  <div style="font-size:13px;color:#5a8a6a;margin-bottom:32px">Acesso restrito</div>
+  <div style="width:100%;background:#fff;border-radius:var(--radius);padding:24px;box-shadow:0 8px 30px rgba(22,163,74,.1)">
+    <div class="form-group"><label class="form-label">Senha de administrador</label>
+    <input class="form-input" id="adminSenhaInput" type="password" inputmode="numeric" maxlength="6" placeholder="••••••"></div>
+    <button class="btn-primary" onclick="validarAdmin()">Entrar</button>
+    <div id="adminErro" style="color:#dc2626;font-size:13px;text-align:center;margin-top:10px;min-height:20px"></div>
+  </div>
+  <button class="btn-voltar-login" style="margin-top:20px" onclick="voltarTelaInicial()">← Voltar</button>
+</div>
+
+<!-- PAINEL ADMIN -->
+<div id="telaAdmin">
+  <div class="admin-header">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div class="admin-header-title">🛡️ Painel Admin</div>
+        <div class="admin-header-sub">Carteira — Gestão de acessos</div>
+      </div>
+      <button onclick="voltarTelaInicial()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:20px;padding:6px 14px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer">✕ Sair</button>
+    </div>
+  </div>
+  <div class="admin-body">
+
+    <!-- RECUPERAR DADOS -->
+    <div class="admin-card" style="border-color:#fcd34d;background:#fffbeb">
+      <div class="admin-card-title" style="color:#d97706">🔍 Recuperar dados perdidos</div>
+      <p style="font-size:13px;color:#92400e;margin-bottom:12px">Varre todo o armazenamento do celular e recupera contas salvas de versões anteriores.</p>
+      <div id="diagnosticoResult" style="margin-bottom:12px"></div>
+      <button class="btn-gerar" style="width:100%;background:linear-gradient(135deg,#d97706,#b45309);margin-bottom:8px" onclick="diagnosticar()">🔍 Escanear dados salvos</button>
+      <button class="btn-gerar" style="width:100%;background:linear-gradient(135deg,#16a34a,#15803d);display:none" id="btnRecuperar" onclick="recuperarDados()">✓ Recuperar dados encontrados</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="admin-card">
+      <div class="admin-card-title">📊 Resumo</div>
+      <div class="admin-stat"><div class="admin-stat-label">Códigos disponíveis</div><div class="admin-stat-value" id="adminQtdLivre" style="color:#16a34a">—</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">Códigos usados</div><div class="admin-stat-value" id="adminQtdUsado" style="color:#dc2626">—</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">Total de códigos</div><div class="admin-stat-value" id="adminQtdTotal">—</div></div>
+      <div class="admin-stat"><div class="admin-stat-label">Faturamento estimado</div><div class="admin-stat-value" id="adminFaturamento" style="color:#16a34a">—</div></div>
+    </div>
+
+    <!-- WHATSAPP + PIX CONFIG -->
+    <div class="admin-card">
+      <div class="admin-card-title">💬 Contato & Pagamento</div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Seu WhatsApp (com DDD, só números)</label>
+        <input class="form-input" id="adminWpp" inputmode="numeric" placeholder="Ex: 91999998888">
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Sua chave PIX (aleatória)</label>
+        <input class="form-input" id="adminPix" placeholder="Cole sua chave PIX aqui">
+      </div>
+      <button class="btn-primary" style="margin-top:0" onclick="salvarConfigs()">💾 Salvar configurações</button>
+    </div>
+
+    <!-- CÓDIGOS -->
+    <div class="admin-card">
+      <div class="admin-card-title" style="justify-content:space-between">
+        <span>🎟️ Códigos de acesso</span>
+        <button class="btn-gerar" onclick="gerarNovoCodigo()">+ Gerar novo</button>
+      </div>
+      <div id="adminListaCodigos"></div>
+    </div>
+
+    <button class="btn-admin-sair" onclick="voltarTelaInicial()">← Sair do painel</button>
+  </div>
+</div>
+
+<!-- MODAL NÚMERO WHATSAPP -->
+<div class="modal-overlay" id="modalFone">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modalFone')">✕</button>
+    <div class="modal-title">💬 WhatsApp — <span id="modalFoneNome"></span></div>
+    <input type="hidden" id="modalFoneId">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Informe o número para enviar o lembrete. Será salvo para as próximas cobranças.</p>
+    <div class="form-group">
+      <label class="form-label">Número com DDD</label>
+      <div style="position:relative">
+        <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px">📱</span>
+        <input class="form-input" id="modalFoneInput" inputmode="numeric" placeholder="Ex: 91999998888" style="padding-left:42px;font-size:18px;font-weight:700">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="salvarFoneEEnviar()">💾 Salvar e enviar WhatsApp</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ PERFIS ══
+const EMOJIS=['😊','😎','🦁','🐯','🦋','🌟','🔥','💎','🌙','🌊','🎯','🎸','🏆','🌺','🦊'];
+let perfilAtivo=null;
+function getPerfis(){return JSON.parse(localStorage.getItem('perfis')||'[]')}
+function savePerfis(p){localStorage.setItem('perfis',JSON.stringify(p))}
+function getChave(id,tipo){return 'dados_'+id+'_'+tipo}
+function loadDados(id){
+  return{
+    fixas:   JSON.parse(localStorage.getItem(getChave(id,'fixas'))  ||'[]'),
+    dividas: JSON.parse(localStorage.getItem(getChave(id,'dividas'))||'[]'),
+    receber: JSON.parse(localStorage.getItem(getChave(id,'receber'))||'[]'),
+    pagFixas:JSON.parse(localStorage.getItem(getChave(id,'pagFixas'))||'{}'),
+  }
+}
+function saveDados(id,d){
+  localStorage.setItem(getChave(id,'fixas'),   JSON.stringify(d.fixas));
+  localStorage.setItem(getChave(id,'dividas'), JSON.stringify(d.dividas));
+  localStorage.setItem(getChave(id,'receber'), JSON.stringify(d.receber));
+  localStorage.setItem(getChave(id,'pagFixas'),JSON.stringify(d.pagFixas));
+}
+let data={};
+const MA=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+let mesAtual=new Date().getMonth(), anoAtual=new Date().getFullYear();
+
+// ── LOGIN ──
+function renderLogin(){
+  const perfis=getPerfis(), lista=document.getElementById('listaPerfis');
+  if(!perfis.length){lista.innerHTML='<div class="empty" style="padding:20px 0"><span class="empty-icon" style="font-size:28px">👤</span><div class="empty-text">Nenhum perfil ainda</div></div>';return}
+  lista.innerHTML=perfis.map(p=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div class="perfil-btn" onclick="selecionarPerfil('${p.id}')">
+        <div class="perfil-avatar" style="background:${p.cor}">${p.emoji}</div>
+        <div class="perfil-info"><div class="perfil-nome">${p.nome}</div><div class="perfil-hint">Toque para entrar</div></div>
+      </div>
+      <button data-pid="${p.id}" data-pnome="${p.nome}" class="btn-excluir-perfil" style="background:#fef2f2;border:2px solid #fecaca;color:#dc2626;width:44px;height:44px;border-radius:var(--radius-sm);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">🗑</button>
+    </div>`).join('');
+  // bind delete buttons after render
+  document.querySelectorAll('.btn-excluir-perfil').forEach(btn=>{
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      excluirPerfil(this.dataset.pid, this.dataset.pnome);
+    });
+  });
+}
+function excluirPerfil(id,nome){
+  if(!confirm('Excluir o perfil "'+nome+'"?\nTodos os dados serão apagados.'))return;
+  ['fixas','dividas','receber','pagFixas'].forEach(t=>localStorage.removeItem(getChave(id,t)));
+  savePerfis(getPerfis().filter(p=>p.id!==id));
+  renderLogin(); toast('Perfil excluído');
+}
+function irCriar(){
+  mostrarTela('telaCriar');
+  document.getElementById('emojiGrid').innerHTML=EMOJIS.map((e,i)=>`<div class="emoji-opt ${i===0?'sel':''}" onclick="selEmoji(this,'${e}')">${e}</div>`).join('');
+  document.getElementById('criarNome').value='';
+  document.getElementById('criarSenha').value='';
+  emojiSel=EMOJIS[0];
+}
+let emojiSel=EMOJIS[0];
+function selEmoji(el,e){document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');emojiSel=e}
+const CORES=['#1a3a2a','#1a2a3a','#3a1a2a','#2a2a1a','#2a1a3a'];
+function salvarPerfil(){
+  const nome=document.getElementById('criarNome').value.trim();
+  const senha=document.getElementById('criarSenha').value;
+  if(!nome){toast('⚠ Informe seu nome');return}
+  if(senha.length!==4||!/^\d{4}$/.test(senha)){toast('⚠ Senha deve ter 4 números');return}
+  const perfis=getPerfis(), cor=CORES[perfis.length%CORES.length], novoId=uid();
+  perfis.push({id:novoId,nome,emoji:emojiSel,cor,senha:btoa(senha)});
+  savePerfis(perfis);
+  // verifica dados antigos
+  const temAntigos=verificarDadosAntigos();
+  if(temAntigos){
+    localStorage.setItem('_perfilImportar',novoId);
+    voltarLogin();
+    setTimeout(()=>document.getElementById('modalImportar').classList.add('open'),400);
+  } else {
+    toast('✓ Perfil criado!'); voltarLogin();
+  }
+}
+function verificarDadosAntigos(){
+  const chaves=['c_fixas','c_dividas','fin_fixas','fin_parceladas'];
+  return chaves.some(k=>{try{const v=JSON.parse(localStorage.getItem(k)||'[]');return v.length>0}catch{return false}});
+}
+function confirmarImportacao(){
+  const perfilId=localStorage.getItem('_perfilImportar')||perfilAtivo?.id;
+  if(!perfilId){fecharModal('modalImportar');return}
+  const fixas=   JSON.parse(localStorage.getItem('c_fixas')   ||localStorage.getItem('fin_fixas')  ||'[]');
+  const dividas= JSON.parse(localStorage.getItem('c_dividas') ||'[]');
+  const receber= JSON.parse(localStorage.getItem('c_receber') ||'[]');
+  const pagFixas=JSON.parse(localStorage.getItem('c_pagFixas')||localStorage.getItem('fin_pagFixas')||'{}');
+  const dividasAnt=JSON.parse(localStorage.getItem('fin_parceladas')||'[]');
+  const dividasMig=dividasAnt.map(d=>({
+    id:d.id,nome:d.nome,obs:d.obs||'',
+    valorTotal:d.valorTotal||(d.totalParcelas*d.valorParcela)||0,
+    pagamentos:(d.historico||[]).map(h=>({id:uid(),data:h.data,valor:h.valor,obs:''}))
+  }));
+  const dadosMerge={
+    fixas:[...fixas],
+    dividas:[...dividas,...dividasMig.filter(d=>!dividas.find(x=>x.id===d.id))],
+    receber:[...receber],
+    pagFixas:{...pagFixas}
+  };
+  saveDados(perfilId,dadosMerge);
+  localStorage.removeItem('_perfilImportar');
+  fecharModal('modalImportar');
+  if(perfilAtivo&&perfilAtivo.id===perfilId){data=loadDados(perfilId);render()}
+  toast('✓ Dados importados!');
+}
+
+// ── SENHA ──
+let senhaDigitada='',perfilSelecionadoId='';
+function selecionarPerfil(id){
+  const p=getPerfis().find(x=>x.id===id);
+  perfilSelecionadoId=id;senhaDigitada='';
+  document.getElementById('senhaAvatar').textContent=p.emoji;
+  document.getElementById('senhaAvatar').style.background=p.cor;
+  document.getElementById('senhaNome').textContent=p.nome;
+  document.getElementById('erroSenha').textContent='';
+  atualizarDots();mostrarTela('telaSenha');
+}
+function tecla(n){if(senhaDigitada.length>=4)return;senhaDigitada+=n;atualizarDots();if(senhaDigitada.length===4)setTimeout(verificarSenha,150)}
+function apagarTecla(){senhaDigitada=senhaDigitada.slice(0,-1);atualizarDots();document.getElementById('erroSenha').textContent=''}
+function atualizarDots(){for(let i=0;i<4;i++)document.getElementById('d'+i).classList.toggle('filled',i<senhaDigitada.length)}
+function verificarSenha(){
+  const p=getPerfis().find(x=>x.id===perfilSelecionadoId);
+  if(btoa(senhaDigitada)===p.senha)entrarApp(p);
+  else{document.getElementById('erroSenha').textContent='❌ Senha incorreta';senhaDigitada='';atualizarDots()}
+}
+function entrarApp(p){
+  perfilAtivo=p;data=loadDados(p.id);
+  document.getElementById('appAvatar').textContent=p.emoji;
+  document.getElementById('appAvatar').style.background=p.cor;
+  document.getElementById('appNome').textContent=p.nome;
+  mostrarTela('telaApp');render();
+  if(verificarDadosAntigos()){
+    const jaImportou=localStorage.getItem('importado_'+p.id);
+    if(!jaImportou){setTimeout(()=>document.getElementById('modalImportar').classList.add('open'),600)}
+  }
+}
+function confirmarImportacaoOk(){
+  confirmarImportacao();
+  if(perfilAtivo) localStorage.setItem('importado_'+perfilAtivo.id,'1');
+}
+function sair(){perfilAtivo=null;data={};mostrarTela('telaLogin');renderLogin()}
+function voltarLogin(){mostrarTela('telaLogin');renderLogin()}
+function mostrarTela(id){
+  ['telaBV','telaCompra','telaCodigo','telaAdminLogin','telaAdmin','telaLogin','telaSenha','telaCriar','telaApp'].forEach(t=>{
+    const el=document.getElementById(t);
+    if(el) el.style.display=(t===id)?(t==='telaApp'||t==='telaAdmin'?'block':'flex'):'none'
+  });
+  if(id==='telaCompra'){
+    const pix=localStorage.getItem('admin_pix')||'';
+    document.getElementById('pixChaveTexto').textContent=pix||'Chave não configurada ainda';
+  }
+}
+
+// ── UTILS ──
+const fmt=v=>'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const mesKey=(m,a)=>a+'-'+String(m+1).padStart(2,'0');
+function toast(msg,dur=2200){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+function mascaraMoeda(el){let v=el.value.replace(/\D/g,'');if(!v){el.value='';return}v=(parseInt(v,10)/100).toFixed(2);el.value=v.replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.')}
+function parseMoeda(str){if(!str)return 0;return parseFloat(str.replace(/\./g,'').replace(',','.'))||0}
+function fmtData(d){if(!d)return'—';const[y,m,day]=d.split('-');return day+'/'+m+'/'+y}
+function hoje(){return new Date().toISOString().slice(0,10)}
+
+// ── TABS / MÊS ──
+function showTab(tab){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['fixas','dividas','receber'][i]===tab));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  render();
+}
+function mudaMes(d){
+  mesAtual+=d;
+  if(mesAtual<0){mesAtual=11;anoAtual--}if(mesAtual>11){mesAtual=0;anoAtual++}
+  renderFixas();
+}
+
+// ── TOGGLE PAGAS/QUITADAS ──
+let mostrandoPagas=false,mostrandoQuitadas=false,mostrandoReceberQuitados=false;
+function togglePagas(){
+  mostrandoPagas=!mostrandoPagas;
+  document.getElementById('listaFixasPagas').style.display=mostrandoPagas?'block':'none';
+  document.getElementById('togglePagasIcon').textContent=mostrandoPagas?'▲ ocultar':'▼ mostrar';
+}
+function toggleQuitadas(){
+  mostrandoQuitadas=!mostrandoQuitadas;
+  document.getElementById('listaDividasQuitadas').style.display=mostrandoQuitadas?'block':'none';
+  document.getElementById('toggleQuitadasIcon').textContent=mostrandoQuitadas?'▲ ocultar':'▼ mostrar';
+}
+function toggleReceberQuitados(){
+  mostrandoReceberQuitados=!mostrandoReceberQuitados;
+  document.getElementById('listaReceberQuitados').style.display=mostrandoReceberQuitados?'block':'none';
+  document.getElementById('toggleReceberQuitadosIcon').textContent=mostrandoReceberQuitados?'▲ ocultar':'▼ mostrar';
+}
+
+// ── RENDER FIXAS ──
+function renderFixas(){
+  const mk=mesKey(mesAtual,anoAtual);
+  document.getElementById('mesLabel').textContent=MA[mesAtual]+'/'+String(anoAtual).slice(2);
+  const pagsDoMes=data.pagFixas[mk]||{};
+  let total=0,pagas=0,pendentes=0;
+  const lista=document.getElementById('listaFixas');
+  const listaPagas=document.getElementById('listaFixasPagas');
+  if(!data.fixas.length){
+    lista.innerHTML='<div class="empty"><span class="empty-icon">🏠</span><div class="empty-text">Nenhuma conta fixa cadastrada</div></div>';
+    ['totalFixas','fixasPagas','fixasPendentes'].forEach(id=>document.getElementById(id).textContent=fmt(0));
+    document.getElementById('secaoFixasPagas').style.display='none';return;
+  }
+  const pendList=[],pagList=[];
+  data.fixas.forEach(c=>{
+    const pagInfo=pagsDoMes[c.id];
+    const pago=!!pagInfo;
+    const valorMes=pagInfo?.valor||c.valor;
+    total+=pago?valorMes:c.valor;
+    if(pago){pagas+=valorMes;pagList.push({c,valorMes})}
+    else{pendentes+=c.valor;pendList.push(c)}
+  });
+  lista.innerHTML=pendList.length?pendList.map(c=>cardFixa(c,false,0)).join(''):'<div class="empty"><span class="empty-icon">✅</span><div class="empty-text">Todas as contas pagas!</div></div>';
+  listaPagas.innerHTML=pagList.map(({c,valorMes})=>cardFixa(c,true,valorMes)).join('');
+  document.getElementById('secaoFixasPagas').style.display=pagList.length?'block':'none';
+  document.getElementById('totalFixas').textContent=fmt(total);
+  document.getElementById('fixasPagas').textContent=fmt(pagas);
+  document.getElementById('fixasPendentes').textContent=fmt(pendentes);
+}
+function cardFixa(c,pago,valorMes){
+  const mk=mesKey(mesAtual,anoAtual);
+  const valorExibir=pago?valorMes:c.valor;
+  const diferente=pago&&valorMes!==c.valor;
+  return `<div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-name">${c.nome}</div>
+        <div class="card-sub">Vence dia ${c.dia||'—'}</div>
+        ${diferente?`<div class="valor-mes-badge">⚡ Valor diferente este mês</div>`:''}
+      </div>
+      ${pago?'<span class="badge-quitado">✓ Pago</span>':'<span class="card-tag tag-fixo">Pendente</span>'}
+    </div>
+    <div class="fixo-row">
+      <div class="fixo-valor" style="color:${pago?'var(--accent)':'var(--warn)'}">${fmt(valorExibir)}</div>
+      <div style="display:flex;gap:6px">
+        ${!pago
+          ?`<button class="btn-sm btn-pay" onclick="abrirPagFixa('${c.id}')">✓ Pagar</button>`
+          :`<button class="btn-sm btn-hist" onclick="despagarFixa('${c.id}')">↩ Desfazer</button>`}
+        <button class="btn-sm btn-edit" onclick="editarFixa('${c.id}')">✏</button>
+        <button class="btn-sm btn-del" onclick="deletarFixa('${c.id}')">🗑</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── RENDER DÍVIDAS ──
+function renderDividas(){
+  let totalSaldo=0,totalPago=0;
+  const lista=document.getElementById('listaDividas');
+  const listaQ=document.getElementById('listaDividasQuitadas');
+  if(!data.dividas.length){
+    lista.innerHTML='<div class="empty"><span class="empty-icon">📌</span><div class="empty-text">Nenhuma dívida cadastrada</div></div>';
+    document.getElementById('totalDividas').textContent=fmt(0);
+    document.getElementById('dividasPago').textContent=fmt(0);
+    document.getElementById('dividasQtd').textContent='0';
+    document.getElementById('secaoDividasQuitadas').style.display='none';return;
+  }
+  const abertas=[],quitadas=[];
+  data.dividas.forEach(c=>{
+    const pago=(c.pagamentos||[]).reduce((s,p)=>s+p.valor,0);
+    const saldo=Math.max(0,c.valorTotal-pago);
+    totalSaldo+=saldo;totalPago+=pago;
+    if(saldo<=0)quitadas.push(c);else abertas.push(c);
+  });
+  lista.innerHTML=abertas.length?abertas.map(c=>cardDivida(c)).join(''):'<div class="empty"><span class="empty-icon">✅</span><div class="empty-text">Nenhuma dívida em aberto!</div></div>';
+  listaQ.innerHTML=quitadas.map(c=>cardDivida(c)).join('');
+  document.getElementById('secaoDividasQuitadas').style.display=quitadas.length?'block':'none';
+  document.getElementById('totalDividas').textContent=fmt(totalSaldo);
+  document.getElementById('dividasPago').textContent=fmt(totalPago);
+  document.getElementById('dividasQtd').textContent=abertas.length+' em aberto';
+}
+function cardDivida(c){
+  const pago=(c.pagamentos||[]).reduce((s,p)=>s+p.valor,0);
+  const saldo=Math.max(0,c.valorTotal-pago);
+  const pct=Math.min(100,Math.round((pago/c.valorTotal)*100));
+  const quitado=saldo<=0;
+  const barCls=pct>=80?'green':pct>=40?'yellow':'red';
+  return `<div class="card">
+    <div class="card-header">
+      <div><div class="card-name">${c.nome}</div>${c.obs?`<div class="card-sub">${c.obs}</div>`:''}</div>
+      ${quitado?'<span class="badge-quitado">✓ Quitado</span>':'<span class="card-tag tag-divida">Em aberto</span>'}
+    </div>
+    <div class="progress-wrap"><div class="progress-bg"><div class="progress-fill ${barCls}" style="width:${pct}%"></div></div>
+    <div class="progress-labels"><span>${pct}% pago</span><span>${(c.pagamentos||[]).length} lançamento(s)</span></div></div>
+    <div class="card-values">
+      <div class="cv"><div class="cv-label">Total</div><div class="cv-value">${fmt(c.valorTotal)}</div></div>
+      <div class="cv"><div class="cv-label">Pago</div><div class="cv-value green">${fmt(pago)}</div></div>
+      <div class="cv"><div class="cv-label">Saldo</div><div class="cv-value red">${fmt(saldo)}</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="card-actions">
+      ${!quitado?`<button class="btn-sm btn-pay" onclick="abrirPagDivida('${c.id}')">✓ Pagar</button>`:''}
+      <button class="btn-sm btn-hist" onclick="verHistDivida('${c.id}')">📋 Hist.</button>
+      <button class="btn-sm btn-edit" onclick="editarDivida('${c.id}')">✏</button>
+      <button class="btn-sm btn-del" onclick="deletarDivida('${c.id}')">🗑</button>
+    </div>
+  </div>`;
+}
+
+// ── RENDER RECEBER ──
+function renderReceber(){
+  let totalAberto=0,totalRecebido=0,qtdPend=0;
+  const lista=document.getElementById('listaReceber');
+  const listaQ=document.getElementById('listaReceberQuitados');
+  if(!data.receber.length){
+    lista.innerHTML='<div class="empty"><span class="empty-icon">💰</span><div class="empty-text">Nenhuma cobrança cadastrada</div></div>';
+    document.getElementById('totalReceber').textContent=fmt(0);
+    document.getElementById('receberRecebido').textContent=fmt(0);
+    document.getElementById('receberQtd').textContent='0';
+    document.getElementById('secaoReceberQuitados').style.display='none';return;
+  }
+  const abertas=[],quitadas=[];
+  data.receber.forEach(c=>{
+    const rec=(c.recebimentos||[]).reduce((s,r)=>s+r.valor,0);
+    const saldo=Math.max(0,c.valorTotal-rec);
+    totalAberto+=saldo;totalRecebido+=rec;
+    if(saldo<=0)quitadas.push(c);else{abertas.push(c);qtdPend++}
+  });
+  lista.innerHTML=abertas.length?abertas.map(c=>cardReceber(c)).join(''):'<div class="empty"><span class="empty-icon">✅</span><div class="empty-text">Tudo recebido!</div></div>';
+  listaQ.innerHTML=quitadas.map(c=>cardReceber(c)).join('');
+  document.getElementById('secaoReceberQuitados').style.display=quitadas.length?'block':'none';
+  document.getElementById('totalReceber').textContent=fmt(totalAberto);
+  document.getElementById('receberRecebido').textContent=fmt(totalRecebido);
+  document.getElementById('receberQtd').textContent=qtdPend+' pendente(s)';
+}
+function cardReceber(c){
+  const rec=(c.recebimentos||[]).reduce((s,r)=>s+r.valor,0);
+  const saldo=Math.max(0,c.valorTotal-rec);
+  const pct=Math.min(100,Math.round((rec/c.valorTotal)*100));
+  const quitado=saldo<=0;
+  const barCls=pct>=80?'green':pct>=40?'yellow':'red';
+  const atrasado=!quitado&&c.venc&&c.venc<hoje();
+  return `<div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-name">${c.nome}</div>
+        ${c.motivo?`<div class="card-sub">${c.motivo}</div>`:''}
+        ${c.dataEmp?`<div class="card-sub">📅 Emprestado em ${fmtData(c.dataEmp)}</div>`:''}
+        ${c.venc?`<div class="card-sub" style="color:${atrasado?'var(--warn)':'var(--muted)'}">${atrasado?'⚠ Venceu em ':'Previsto: '}${fmtData(c.venc)}</div>`:''}
+        ${atrasado?'<span class="lembrete-tag">⏰ Cobrar!</span>':''}
+      </div>
+      ${quitado?'<span class="badge-quitado">✓ Recebido</span>':'<span class="card-tag tag-receber">A receber</span>'}
+    </div>
+    <div class="progress-wrap"><div class="progress-bg"><div class="progress-fill ${barCls}" style="width:${pct}%"></div></div>
+    <div class="progress-labels"><span>${pct}% recebido</span><span>${(c.recebimentos||[]).length} entrada(s)</span></div></div>
+    <div class="card-values">
+      <div class="cv"><div class="cv-label">Total</div><div class="cv-value">${fmt(c.valorTotal)}</div></div>
+      <div class="cv"><div class="cv-label">Recebido</div><div class="cv-value green">${fmt(rec)}</div></div>
+      <div class="cv"><div class="cv-label">Falta</div><div class="cv-value" style="color:var(--yellow)">${fmt(saldo)}</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="card-actions">
+      ${!quitado?`<button class="btn-sm btn-receber" onclick="abrirRecebimento('${c.id}')">💰 Receber</button>`:''}
+      ${!quitado?(()=>{const d=diasParaVencer(c.venc);if(d!==null&&d>=0&&d<=5)return `<button class="btn-sm btn-wpp" style="background:#dc2626" onclick="enviarWppLembrete('${c.id}')">💬 Cobrar!</button>`;return `<button class="btn-sm btn-wpp" onclick="enviarWppLembrete('${c.id}')">💬</button>`;})():''}
+      <button class="btn-sm btn-hist" onclick="verHistReceber('${c.id}')">📋</button>
+      <button class="btn-sm btn-edit" onclick="editarReceber('${c.id}')">✏</button>
+      <button class="btn-sm btn-del" onclick="deletarReceber('${c.id}')">🗑</button>
+    </div>
+  </div>`;
+}
+
+// ── TOTAL GERAL ──
+function atualizarTotalGeral(){
+  let t=0;
+  (data.dividas||[]).forEach(c=>{const pago=(c.pagamentos||[]).reduce((s,p)=>s+p.valor,0);t+=Math.max(0,c.valorTotal-pago)});
+  document.getElementById('totalGeral').textContent=fmt(t);
+}
+
+function verificarAlertasVencimento(){
+  const banner=document.getElementById('alertaBanner');
+  if(!data.receber||!data.receber.length){banner.style.display='none';return;}
+  const hj=new Date(); hj.setHours(0,0,0,0);
+  const urgentes=data.receber.filter(c=>{
+    const rec=(c.recebimentos||[]).reduce((s,r)=>s+r.valor,0);
+    const saldo=Math.max(0,c.valorTotal-rec);
+    if(saldo<=0||!c.venc)return false;
+    const venc=new Date(c.venc+'T00:00:00');
+    const dias=Math.ceil((venc-hj)/(1000*60*60*24));
+    return dias>=0&&dias<=5;
+  });
+  if(urgentes.length){
+    banner.style.display='block';
+    const nomes=urgentes.map(c=>c.nome).join(', ');
+    document.getElementById('alertaTitulo').textContent=urgentes.length===1
+      ?'⚠️ '+urgentes[0].nome+' vence em breve!'
+      :'⚠️ '+urgentes.length+' cobranças vencem em breve!';
+    document.getElementById('alertaSub').textContent='Toque para ver e enviar lembrete via WhatsApp';
+    // Badge na aba
+    const tabReceber=document.querySelectorAll('.tab')[2];
+    if(tabReceber&&!tabReceber.querySelector('.tab-badge')){
+      const badge=document.createElement('span');
+      badge.className='tab-badge'; badge.textContent=urgentes.length;
+      tabReceber.appendChild(badge);
+    }
+  } else {
+    banner.style.display='none';
+    const tabReceber=document.querySelectorAll('.tab')[2];
+    if(tabReceber){const b=tabReceber.querySelector('.tab-badge');if(b)b.remove();}
+  }
+}
+
+function irParaReceber(){
+  showTab('receber');
+  setTimeout(()=>{
+    const hj=new Date(); hj.setHours(0,0,0,0);
+    // Encontra cards urgentes pelo nome da conta
+    const urgentes=(data.receber||[]).filter(c=>{
+      const rec=(c.recebimentos||[]).reduce((s,r)=>s+r.valor,0);
+      const saldo=Math.max(0,c.valorTotal-rec);
+      if(saldo<=0||!c.venc)return false;
+      const v=new Date(c.venc+'T00:00:00');
+      const dias=Math.ceil((v-hj)/(1000*60*60*24));
+      return dias>=0&&dias<=5;
+    });
+    if(urgentes.length){
+      // Pega todos os cards da lista e destaca os urgentes
+      const todosCards=document.querySelectorAll('#listaReceber .card');
+      const nomeUrgente=urgentes[0].nome;
+      todosCards.forEach(card=>{
+        const nome=card.querySelector('.card-name');
+        if(nome&&nome.textContent===nomeUrgente){
+          card.scrollIntoView({behavior:'smooth',block:'center'});
+          card.style.border='2px solid #dc2626';
+          card.style.boxShadow='0 0 20px rgba(220,38,38,.3)';
+          setTimeout(()=>{card.style.border='';card.style.boxShadow='';},2500);
+        }
+      });
+    }
+  },300);
+}
+
+function enviarWppLembrete(id){
+  const c=data.receber.find(x=>x.id===id);
+  if(!c.fone){
+    // Abre modal para cadastrar o número
+    document.getElementById('modalFoneId').value=id;
+    document.getElementById('modalFoneNome').textContent=c.nome;
+    document.getElementById('modalFoneInput').value='';
+    document.getElementById('modalFone').classList.add('open');
+    return;
+  }
+  dispararWpp(c);
+}
+
+function dispararWpp(c){
+  const rec=(c.recebimentos||[]).reduce((s,r)=>s+r.valor,0);
+  const saldo=Math.max(0,c.valorTotal-rec);
+  const dataVenc=c.venc?fmtData(c.venc):'em breve';
+  const msg=encodeURIComponent(
+    'Olá, '+c.nome+'! 😊\n\n'+
+    'Passando para lembrar que nosso combinado vence em *'+dataVenc+'*.\n'+
+    'Valor pendente: *'+fmt(saldo)+'*\n\n'+
+    'Qualquer dúvida estou à disposição! 🙏'
+  );
+  window.open('https://wa.me/55'+c.fone+'?text='+msg,'_blank');
+}
+
+function salvarFoneEEnviar(){
+  const id=document.getElementById('modalFoneId').value;
+  const fone=document.getElementById('modalFoneInput').value.replace(/[^0-9]/g,'');
+  if(!fone||fone.length<10){toast('⚠ Número inválido');return;}
+  const c=data.receber.find(x=>x.id===id);
+  c.fone=fone;
+  saveDados(perfilAtivo.id,data);
+  fecharModal('modalFone');
+  render();
+  toast('✓ Número salvo!');
+  setTimeout(()=>dispararWpp(c),300);
+}
+
+function diasParaVencer(venc){
+  if(!venc) return null;
+  const hj=new Date(); hj.setHours(0,0,0,0);
+  const v=new Date(venc+'T00:00:00');
+  return Math.ceil((v-hj)/(1000*60*60*24));
+}
+
+function render(){renderFixas();renderDividas();renderReceber();atualizarTotalGeral();verificarAlertasVencimento()}
+
+// ── CADASTROS ──
+function abrirModalFixa(){
+  document.getElementById('editFixaId').value='';
+  document.getElementById('modalFixaTitulo').textContent='Nova conta fixa';
+  ['fixaNome','fixaDia'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fixaValor').value='';
+  document.getElementById('modalFixa').classList.add('open');
+}
+function editarFixa(id){
+  const c=data.fixas.find(x=>x.id===id);
+  document.getElementById('editFixaId').value=id;
+  document.getElementById('modalFixaTitulo').textContent='Editar conta fixa';
+  document.getElementById('fixaNome').value=c.nome;
+  document.getElementById('fixaDia').value=c.dia||'';
+  document.getElementById('fixaValor').value=fmt(c.valor).replace('R$ ','');
+  document.getElementById('modalFixa').classList.add('open');
+}
+function salvarFixa(){
+  const nome=document.getElementById('fixaNome').value.trim();
+  const valor=parseMoeda(document.getElementById('fixaValor').value);
+  const dia=parseInt(document.getElementById('fixaDia').value)||0;
+  const editId=document.getElementById('editFixaId').value;
+  if(!nome){toast('⚠ Informe o nome');return}if(!valor){toast('⚠ Informe o valor');return}
+  if(editId){const c=data.fixas.find(x=>x.id===editId);c.nome=nome;c.valor=valor;c.dia=dia}
+  else data.fixas.push({id:uid(),nome,valor,dia});
+  saveDados(perfilAtivo.id,data);fecharModal('modalFixa');render();toast('✓ Salvo!');
+}
+
+function abrirModalDivida(){
+  document.getElementById('editDividaId').value='';
+  document.getElementById('modalDividaTitulo').textContent='Nova dívida';
+  ['divNome','divObs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('divValor').value='';
+  document.getElementById('modalDivida').classList.add('open');
+}
+function editarDivida(id){
+  const c=data.dividas.find(x=>x.id===id);
+  document.getElementById('editDividaId').value=id;
+  document.getElementById('modalDividaTitulo').textContent='Editar dívida';
+  document.getElementById('divNome').value=c.nome;
+  document.getElementById('divObs').value=c.obs||'';
+  document.getElementById('divValor').value=fmt(c.valorTotal).replace('R$ ','');
+  document.getElementById('modalDivida').classList.add('open');
+}
+function salvarDivida(){
+  const nome=document.getElementById('divNome').value.trim();
+  const valorTotal=parseMoeda(document.getElementById('divValor').value);
+  const obs=document.getElementById('divObs').value.trim();
+  const editId=document.getElementById('editDividaId').value;
+  if(!nome){toast('⚠ Informe o nome');return}if(!valorTotal){toast('⚠ Informe o valor');return}
+  if(editId){const c=data.dividas.find(x=>x.id===editId);c.nome=nome;c.valorTotal=valorTotal;c.obs=obs}
+  else data.dividas.push({id:uid(),nome,valorTotal,obs,pagamentos:[]});
+  saveDados(perfilAtivo.id,data);fecharModal('modalDivida');render();toast('✓ Salvo!');
+}
+
+function abrirModalReceber(){
+  document.getElementById('editReceberId').value='';
+  document.getElementById('modalReceberTitulo').textContent='Novo — A Receber';
+  ['recNome','recMotivo','recVenc','recDataEmp','recFone'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('recValor').value='';
+  document.getElementById('recDataEmp').value=hoje();
+  document.getElementById('modalReceber').classList.add('open');
+}
+function editarReceber(id){
+  const c=data.receber.find(x=>x.id===id);
+  document.getElementById('editReceberId').value=id;
+  document.getElementById('modalReceberTitulo').textContent='Editar — A Receber';
+  document.getElementById('recNome').value=c.nome;
+  document.getElementById('recMotivo').value=c.motivo||'';
+  document.getElementById('recVenc').value=c.venc||'';
+  document.getElementById('recDataEmp').value=c.dataEmp||'';
+  document.getElementById('recFone').value=c.fone||'';
+  document.getElementById('recValor').value=fmt(c.valorTotal).replace('R$ ','');
+  document.getElementById('modalReceber').classList.add('open');
+}
+function salvarReceber(){
+  const nome=document.getElementById('recNome').value.trim();
+  const valorTotal=parseMoeda(document.getElementById('recValor').value);
+  const motivo=document.getElementById('recMotivo').value.trim();
+  const venc=document.getElementById('recVenc').value;
+  const dataEmp=document.getElementById('recDataEmp').value;
+  const fone=document.getElementById('recFone').value.replace(/[^0-9]/g,'');
+  const editId=document.getElementById('editReceberId').value;
+  if(!nome){toast('⚠ Informe o nome');return}if(!valorTotal){toast('⚠ Informe o valor');return}
+  if(editId){const c=data.receber.find(x=>x.id===editId);c.nome=nome;c.valorTotal=valorTotal;c.motivo=motivo;c.venc=venc;c.dataEmp=dataEmp;c.fone=fone}
+  else data.receber.push({id:uid(),nome,valorTotal,motivo,venc,dataEmp,fone,recebimentos:[]});
+  saveDados(perfilAtivo.id,data);fecharModal('modalReceber');render();toast('✓ Salvo!');
+}
+
+// ── PAGAMENTOS ──
+function abrirPagFixa(id){
+  const c=data.fixas.find(x=>x.id===id);
+  document.getElementById('pagFixaId').value=id;
+  document.getElementById('modalPagFixaTitulo').textContent='Pagar — '+c.nome;
+  document.getElementById('pagFixaData').value=hoje();
+  document.getElementById('pagFixaValor').value=fmt(c.valor).replace('R$ ','');
+  document.getElementById('modalPagFixa').classList.add('open');
+}
+function confirmarPagFixa(){
+  const id=document.getElementById('pagFixaId').value;
+  const valor=parseMoeda(document.getElementById('pagFixaValor').value);
+  const dataPag=document.getElementById('pagFixaData').value;
+  if(!valor){toast('⚠ Informe o valor');return}
+  const mk=mesKey(mesAtual,anoAtual);
+  if(!data.pagFixas[mk])data.pagFixas[mk]={};
+  data.pagFixas[mk][id]={data:dataPag,valor};
+  saveDados(perfilAtivo.id,data);fecharModal('modalPagFixa');render();toast('✓ Paga!');
+}
+function despagarFixa(id){
+  const mk=mesKey(mesAtual,anoAtual);
+  if(data.pagFixas[mk])delete data.pagFixas[mk][id];
+  saveDados(perfilAtivo.id,data);renderFixas();toast('Pagamento desfeito');
+}
+
+function abrirPagDivida(id){
+  const c=data.dividas.find(x=>x.id===id);
+  document.getElementById('pagDividaId').value=id;
+  document.getElementById('modalPagDividaTitulo').textContent='Pagar — '+c.nome;
+  document.getElementById('pagDividaData').value=hoje();
+  document.getElementById('pagDividaValor').value='';
+  document.getElementById('pagDividaObs').value='';
+  document.getElementById('modalPagDivida').classList.add('open');
+}
+function confirmarPagDivida(){
+  const id=document.getElementById('pagDividaId').value;
+  const valor=parseMoeda(document.getElementById('pagDividaValor').value);
+  if(!valor){toast('⚠ Informe o valor');return}
+  const dataPag=document.getElementById('pagDividaData').value;
+  const obs=document.getElementById('pagDividaObs').value.trim();
+  const c=data.dividas.find(x=>x.id===id);
+  c.pagamentos.push({id:uid(),data:dataPag,valor,obs});
+  saveDados(perfilAtivo.id,data);fecharModal('modalPagDivida');render();toast('✓ '+fmt(valor)+' registrado!');
+}
+
+function abrirRecebimento(id){
+  const c=data.receber.find(x=>x.id===id);
+  document.getElementById('recPagId').value=id;
+  document.getElementById('modalRecTitle').textContent='Receber — '+c.nome;
+  document.getElementById('recPagData').value=hoje();
+  document.getElementById('recPagValor').value='';
+  document.getElementById('recPagObs').value='';
+  document.getElementById('modalRecebimento').classList.add('open');
+}
+function confirmarRecebimento(){
+  const id=document.getElementById('recPagId').value;
+  const valor=parseMoeda(document.getElementById('recPagValor').value);
+  if(!valor){toast('⚠ Informe o valor');return}
+  const dataPag=document.getElementById('recPagData').value;
+  const obs=document.getElementById('recPagObs').value.trim();
+  const c=data.receber.find(x=>x.id===id);
+  c.recebimentos.push({id:uid(),data:dataPag,valor,obs});
+  saveDados(perfilAtivo.id,data);fecharModal('modalRecebimento');render();toast('✓ '+fmt(valor)+' recebido!');
+}
+
+// ── HISTÓRICOS ──
+function verHistDivida(id){
+  const c=data.dividas.find(x=>x.id===id);
+  document.getElementById('modalHistTitle').textContent='Histórico — '+c.nome;
+  const pags=c.pagamentos||[];
+  document.getElementById('modalHistContent').innerHTML=!pags.length
+    ?'<div class="empty"><span class="empty-icon">📭</span><div class="empty-text">Sem pagamentos</div></div>'
+    :`<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase">Total pago</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent)">${fmt(pags.reduce((s,p)=>s+p.valor,0))}</div>
+      </div>
+      ${pags.map(p=>`<div class="hist-item">
+        <div><div class="hist-desc">${p.obs||'Pagamento'}</div><div class="hist-date">${fmtData(p.data)}</div></div>
+        <div style="display:flex;align-items:center;gap:8px"><div class="hist-val">${fmt(p.valor)}</div>
+        <button class="hist-del" onclick="deletarPagamento('${id}','${p.id}')">✕</button></div></div>`).join('')}`;
+  document.getElementById('modalHist').classList.add('open');
+}
+function verHistReceber(id){
+  const c=data.receber.find(x=>x.id===id);
+  document.getElementById('modalHistTitle').textContent='Histórico — '+c.nome;
+  const recs=c.recebimentos||[];
+  document.getElementById('modalHistContent').innerHTML=!recs.length
+    ?'<div class="empty"><span class="empty-icon">📭</span><div class="empty-text">Sem recebimentos</div></div>'
+    :`<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase">Total recebido</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent)">${fmt(recs.reduce((s,r)=>s+r.valor,0))}</div>
+      </div>
+      ${recs.map(r=>`<div class="hist-item">
+        <div><div class="hist-desc">${r.obs||'Recebimento'}</div><div class="hist-date">${fmtData(r.data)}</div></div>
+        <div style="display:flex;align-items:center;gap:8px"><div class="hist-val">${fmt(r.valor)}</div>
+        <button class="hist-del" onclick="deletarRecebimento('${id}','${r.id}')">✕</button></div></div>`).join('')}`;
+  document.getElementById('modalHist').classList.add('open');
+}
+function deletarPagamento(cId,pId){
+  const c=data.dividas.find(x=>x.id===cId);
+  c.pagamentos=c.pagamentos.filter(p=>p.id!==pId);
+  saveDados(perfilAtivo.id,data);render();verHistDivida(cId);toast('Removido');
+}
+function deletarRecebimento(cId,rId){
+  const c=data.receber.find(x=>x.id===cId);
+  c.recebimentos=c.recebimentos.filter(r=>r.id!==rId);
+  saveDados(perfilAtivo.id,data);render();verHistReceber(cId);toast('Removido');
+}
+
+// ── DELETAR ──
+function deletarFixa(id){if(!confirm('Remover?'))return;data.fixas=data.fixas.filter(c=>c.id!==id);saveDados(perfilAtivo.id,data);render();toast('Removida')}
+function deletarDivida(id){if(!confirm('Remover?'))return;data.dividas=data.dividas.filter(c=>c.id!==id);saveDados(perfilAtivo.id,data);render();toast('Removida')}
+function deletarReceber(id){if(!confirm('Remover?'))return;data.receber=data.receber.filter(c=>c.id!==id);saveDados(perfilAtivo.id,data);render();toast('Removida')}
+
+// fechar modal ao clicar fora
+['modalFixa','modalDivida','modalReceber','modalPagFixa','modalPagDivida','modalRecebimento','modalHist','modalImportar','modalFone'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)fecharModal(id)})
+});
+function fecharModal(id){document.getElementById(id).classList.remove('open')}
+
+// ══ CÓDIGOS DE ACESSO ══
+const CODIGOS_VALIDOS = {
+  "CWQH7C": true,
+  "J7IHKU": true,
+  "WYW7SS": true,
+  "WS41Y7": true,
+  "0LI29A": true,
+  "APA51K": true,
+  "VILEEU": true,
+  "MP5358": true,
+  "LWJO9Y": true,
+  "A1IBE4": true,
+};
+
+function temAcesso() {
+  return localStorage.getItem('acesso_liberado') === '1' || localStorage.getItem('admin_acesso') === '1';
+}
+function liberarAdminAcesso() {
+  localStorage.setItem('admin_acesso','1');
+  localStorage.setItem('acesso_liberado','1');
+}
+
+function validarCodigo() {
+  const codigo = document.getElementById('codigoInput').value.trim().toUpperCase();
+  const usados = JSON.parse(localStorage.getItem('codigos_usados') || '[]');
+  if (!codigo) { document.getElementById('codigoErro').textContent = '⚠ Digite o código'; return; }
+  if (!CODIGOS_VALIDOS[codigo]) { document.getElementById('codigoErro').textContent = '❌ Código inválido'; return; }
+  if (usados.includes(codigo)) { document.getElementById('codigoErro').textContent = '❌ Este código já foi utilizado'; return; }
+  usados.push(codigo);
+  localStorage.setItem('codigos_usados', JSON.stringify(usados));
+  localStorage.setItem('acesso_liberado', '1');
+  localStorage.setItem('codigo_usado', codigo);
+  toast('✓ Acesso liberado! Bem-vinda!');
+  setTimeout(() => { mostrarTela('telaLogin'); renderLogin(); }, 1000);
+}
+
+function abrirWhatsapp() {
+  const num = localStorage.getItem('admin_whatsapp') || '';
+  if (!num) { alert('Contato não configurado ainda. Tente novamente em breve.'); return; }
+  const msg = encodeURIComponent('Olá! Vi o app *Carteira* e tenho interesse em adquirir o acesso.\n\nPoderia me passar as instruções para pagamento? 😊');
+  window.open('https://wa.me/55' + num + '?text=' + msg, '_blank');
+}
+
+// ══ DIAGNÓSTICO E RECUPERAÇÃO ══
+let dadosEncontrados = null;
+
+function diagnosticar() {
+  const result = document.getElementById('diagnosticoResult');
+  const btnRec = document.getElementById('btnRecuperar');
+  
+  // Varre TUDO no localStorage
+  const todasChaves = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    todasChaves.push(localStorage.key(i));
+  }
+  
+  // Busca qualquer chave que tenha dados de contas
+  let fixasEnc = [], dividasEnc = [], receberEnc = [], pagFixasEnc = {};
+  let fontesEncontradas = [];
+  
+  todasChaves.forEach(chave => {
+    try {
+      const val = JSON.parse(localStorage.getItem(chave) || 'null');
+      if (!val) return;
+      
+      // Chaves antigas c_* e fin_*
+      if (chave === 'c_fixas' || chave === 'fin_fixas') { fixasEnc = [...fixasEnc, ...val]; fontesEncontradas.push(chave); }
+      if (chave === 'c_dividas') { dividasEnc = [...dividasEnc, ...val]; fontesEncontradas.push(chave); }
+      if (chave === 'fin_parceladas') {
+        const conv = val.map(d => ({id:d.id||('d'+Date.now()),nome:d.nome,obs:d.obs||'',valorTotal:d.valorTotal||(d.totalParcelas*d.valorParcela)||0,pagamentos:(d.historico||[]).map(h=>({id:'h'+Math.random().toString(36).slice(2),data:h.data,valor:h.valor,obs:''}))}));
+        dividasEnc = [...dividasEnc, ...conv]; fontesEncontradas.push(chave);
+      }
+      if (chave === 'c_receber') { receberEnc = [...receberEnc, ...val]; fontesEncontradas.push(chave); }
+      if (chave === 'c_pagFixas' || chave === 'fin_pagFixas') { pagFixasEnc = {...pagFixasEnc, ...val}; fontesEncontradas.push(chave); }
+      
+      // Chaves de perfil dados_*
+      if (chave.startsWith('dados_') && chave.endsWith('_fixas') && Array.isArray(val) && val.length > 0) {
+        fixasEnc = [...fixasEnc, ...val]; fontesEncontradas.push(chave);
+      }
+      if (chave.startsWith('dados_') && chave.endsWith('_dividas') && Array.isArray(val) && val.length > 0) {
+        dividasEnc = [...dividasEnc, ...val]; fontesEncontradas.push(chave);
+      }
+      if (chave.startsWith('dados_') && chave.endsWith('_receber') && Array.isArray(val) && val.length > 0) {
+        receberEnc = [...receberEnc, ...val]; fontesEncontradas.push(chave);
+      }
+      if (chave.startsWith('dados_') && chave.endsWith('_pagFixas') && typeof val === 'object') {
+        pagFixasEnc = {...pagFixasEnc, ...val}; fontesEncontradas.push(chave);
+      }
+    } catch(e) {}
+  });
+  
+  // Remove duplicatas por ID
+  const uniq = (arr) => arr.filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i);
+  fixasEnc = uniq(fixasEnc);
+  dividasEnc = uniq(dividasEnc);
+  receberEnc = uniq(receberEnc);
+  
+  const total = fixasEnc.length + dividasEnc.length + receberEnc.length;
+  
+  if (total === 0) {
+    result.innerHTML = '<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px;font-size:13px;color:#dc2626">❌ Nenhum dado encontrado no armazenamento.</div>';
+    btnRec.style.display = 'none';
+    dadosEncontrados = null;
+  } else {
+    dadosEncontrados = { fixas: fixasEnc, dividas: dividasEnc, receber: receberEnc, pagFixas: pagFixasEnc };
+    result.innerHTML = `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;font-size:13px;color:#16a34a">
+      ✅ <strong>${total} contas encontradas!</strong><br>
+      🏠 ${fixasEnc.length} conta(s) fixa(s)<br>
+      📌 ${dividasEnc.length} dívida(s)<br>
+      💰 ${receberEnc.length} conta(s) a receber<br>
+      <span style="font-size:11px;color:#5a8a6a;margin-top:4px;display:block">Fontes: ${[...new Set(fontesEncontradas)].join(', ')}</span>
+    </div>`;
+    btnRec.style.display = 'block';
+  }
+}
+
+function recuperarDados() {
+  if (!dadosEncontrados || !perfilAtivo) {
+    toast('⚠ Entre em um perfil primeiro e tente novamente');
+    return;
+  }
+  data.fixas = [...(data.fixas||[]), ...dadosEncontrados.fixas].filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i);
+  data.dividas = [...(data.dividas||[]), ...dadosEncontrados.dividas].filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i);
+  data.receber = [...(data.receber||[]), ...dadosEncontrados.receber].filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i);
+  data.pagFixas = {...dadosEncontrados.pagFixas, ...(data.pagFixas||{})};
+  saveDados(perfilAtivo.id, data);
+  toast('✓ ' + (dadosEncontrados.fixas.length + dadosEncontrados.dividas.length + dadosEncontrados.receber.length) + ' contas recuperadas!');
+  document.getElementById('diagnosticoResult').innerHTML = '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;font-size:13px;color:#16a34a">✅ Dados importados com sucesso!</div>';
+  document.getElementById('btnRecuperar').style.display = 'none';
+  dadosEncontrados = null;
+  render();
+}
+
+// ══ ADMIN ══
+const ADMIN_SENHA = '121019';
+
+function abrirAdmin() {
+  document.getElementById('adminSenhaInput').value = '';
+  document.getElementById('adminErro').textContent = '';
+  mostrarTela('telaAdminLogin');
+}
+
+function validarAdmin() {
+  const senha = document.getElementById('adminSenhaInput').value;
+  if (senha === ADMIN_SENHA) {
+    liberarAdminAcesso();
+    mostrarTela('telaAdmin');
+    renderAdmin();
+  } else {
+    document.getElementById('adminErro').textContent = '❌ Senha incorreta';
+  }
+}
+
+function voltarTelaInicial() {
+  if (temAcesso()) { mostrarTela('telaLogin'); renderLogin(); }
+  else mostrarTela('telaBV');
+}
+
+function renderAdmin() {
+  const usados = JSON.parse(localStorage.getItem('codigos_usados') || '[]');
+  const todosOsCodigos = JSON.parse(localStorage.getItem('codigos_extras') || '[]');
+  const baseKeys = Object.keys(CODIGOS_VALIDOS);
+  const todos = [...new Set([...baseKeys, ...todosOsCodigos])];
+  const livre = todos.filter(c => !usados.includes(c)).length;
+  const usado = todos.filter(c => usados.includes(c)).length;
+  document.getElementById('adminQtdLivre').textContent = livre;
+  document.getElementById('adminQtdUsado').textContent = usado;
+  document.getElementById('adminQtdTotal').textContent = todos.length;
+  document.getElementById('adminFaturamento').textContent = 'R$ ' + (usado * 60).toFixed(2).replace('.', ',');
+  const wpp = localStorage.getItem('admin_whatsapp') || '';
+  document.getElementById('adminWpp').value = wpp;
+  const pix = localStorage.getItem('admin_pix') || '';
+  document.getElementById('adminPix').value = pix;
+  const lista = document.getElementById('adminListaCodigos');
+  lista.innerHTML = todos.map(c => {
+    const isUsado = usados.includes(c);
+    return `<div class="codigo-item ${isUsado ? 'usado' : 'livre'}">
+      <div class="codigo-badge">${c}</div>
+      <span class="codigo-status ${isUsado ? 'usado' : 'livre'}">${isUsado ? '✓ Usado' : '● Disponível'}</span>
+    </div>`;
+  }).join('');
+}
+
+function salvarConfigs() {
+  const num = document.getElementById('adminWpp').value.replace(/[^0-9]/g,'');
+  const pix = document.getElementById('adminPix').value.trim();
+  if (!num || num.length < 10) { toast('⚠ Número de WhatsApp inválido'); return; }
+  localStorage.setItem('admin_whatsapp', num);
+  if (pix) localStorage.setItem('admin_pix', pix);
+  toast('✓ Configurações salvas!');
+}
+
+function copiarPix() {
+  const chave = localStorage.getItem('admin_pix') || '';
+  if (!chave) { toast('⚠ Chave PIX não configurada'); return; }
+  navigator.clipboard.writeText(chave).then(() => toast('✓ Chave PIX copiada!')).catch(() => {
+    const el = document.createElement('textarea');
+    el.value = chave; document.body.appendChild(el);
+    el.select(); document.execCommand('copy');
+    document.body.removeChild(el); toast('✓ Chave PIX copiada!');
+  });
+}
+
+function gerarNovoCodigo() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let novo = '';
+  for (let i = 0; i < 6; i++) novo += chars[Math.floor(Math.random() * chars.length)];
+  const extras = JSON.parse(localStorage.getItem('codigos_extras') || '[]');
+  extras.push(novo);
+  localStorage.setItem('codigos_extras', JSON.stringify(extras));
+  // Add to valid codes at runtime
+  CODIGOS_VALIDOS[novo] = true;
+  renderAdmin();
+  toast('✓ Código ' + novo + ' gerado!');
+}
+
+// INIT
+if (temAcesso()) {
+  mostrarTela('telaLogin');
+  renderLogin();
+} else {
+  mostrarTela('telaBV');
+}
+
+// Acesso admin via toque 5x no cadeado
+let toquesCadeado = 0;
+document.querySelector('.login-logo') && document.querySelector('.login-logo').addEventListener('click', () => {
+  toquesCadeado++;
+  if (toquesCadeado >= 5) { toquesCadeado = 0; abrirAdmin(); }
+});
+document.querySelector('.bv-logo') && document.querySelector('.bv-logo').addEventListener('click', () => {
+  toquesCadeado++;
+  if (toquesCadeado >= 5) { toquesCadeado = 0; abrirAdmin(); }
+});
+</script>
+</body>
+</html>
