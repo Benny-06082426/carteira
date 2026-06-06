@@ -596,6 +596,15 @@
   </div>
   <div class="admin-body">
 
+    <!-- RECUPERAR DADOS -->
+    <div class="admin-card" style="border-color:#fcd34d;background:#fffbeb">
+      <div class="admin-card-title" style="color:#d97706">🔍 Recuperar dados perdidos</div>
+      <p style="font-size:13px;color:#92400e;margin-bottom:12px">Varre todo o armazenamento do celular e recupera contas salvas de versões anteriores.</p>
+      <div id="diagnosticoResult" style="margin-bottom:12px"></div>
+      <button class="btn-gerar" style="width:100%;background:linear-gradient(135deg,#d97706,#b45309);margin-bottom:8px" onclick="diagnosticar()">🔍 Escanear dados salvos</button>
+      <button class="btn-gerar" style="width:100%;background:linear-gradient(135deg,#16a34a,#15803d);display:none" id="btnRecuperar" onclick="recuperarDados()">✓ Recuperar dados encontrados</button>
+    </div>
+
     <!-- STATS -->
     <div class="admin-card">
       <div class="admin-card-title">📊 Resumo</div>
@@ -1257,6 +1266,96 @@ function abrirWhatsapp() {
   if (!num) { alert('Contato não configurado ainda. Tente novamente em breve.'); return; }
   const msg = encodeURIComponent('Olá! Vi o app *Carteira* e tenho interesse em adquirir o acesso.\n\nPoderia me passar as instruções para pagamento? 😊');
   window.open('https://wa.me/55' + num + '?text=' + msg, '_blank');
+}
+
+// ══ DIAGNÓSTICO E RECUPERAÇÃO ══
+let dadosEncontrados = null;
+
+function diagnosticar() {
+  const result = document.getElementById('diagnosticoResult');
+  const btnRec = document.getElementById('btnRecuperar');
+  
+  // Varre TUDO no localStorage
+  const todasChaves = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    todasChaves.push(localStorage.key(i));
+  }
+  
+  // Busca qualquer chave que tenha dados de contas
+  let fixasEnc = [], dividasEnc = [], receberEnc = [], pagFixasEnc = {};
+  let fontesEncontradas = [];
+  
+  todasChaves.forEach(chave => {
+    try {
+      const val = JSON.parse(localStorage.getItem(chave) || 'null');
+      if (!val) return;
+      
+      // Chaves antigas c_* e fin_*
+      if (chave === 'c_fixas' || chave === 'fin_fixas') { fixasEnc = [...fixasEnc, ...val]; fontesEncontradas.push(chave); }
+      if (chave === 'c_dividas') { dividasEnc = [...dividasEnc, ...val]; fontesEncontradas.push(chave); }
+      if (chave === 'fin_parceladas') {
+        const conv = val.map(d => ({id:d.id||('d'+Date.now()),nome:d.nome,obs:d.obs||'',valorTotal:d.valorTotal||(d.totalParcelas*d.valorParcela)||0,pagamentos:(d.historico||[]).map(h=>({id:'h'+Math.random().toString(36).slice(2),data:h.data,valor:h.valor,obs:''}))}));
+        dividasEnc = [...dividasEnc, ...conv]; fontesEncontradas.push(chave);
+      }
+      if (chave === 'c_receber') { receberEnc = [...receberEnc, ...val]; fontesEncontradas.push(chave); }
+      if (chave === 'c_pagFixas' || chave === 'fin_pagFixas') { pagFixasEnc = {...pagFixasEnc, ...val}; fontesEncontradas.push(chave); }
+      
+      // Chaves de perfil dados_*
+      if (chave.startsWith('dados_') && chave.endsWith('_fixas') && Array.isArray(val) && val.length > 0) {
+        fixasEnc = [...fixasEnc, ...val]; fontesEncontradas.push(chave);
+      }
+      if (chave.startsWith('dados_') && chave.endsWith('_dividas') && Array.isArray(val) && val.length > 0) {
+        dividasEnc = [...dividasEnc, ...val]; fontesEncontradas.push(chave);
+      }
+      if (chave.startsWith('dados_') && chave.endsWith('_receber') && Array.isArray(val) && val.length > 0) {
+        receberEnc = [...receberEnc, ...val]; fontesEncontradas.push(chave);
+      }
+      if (chave.startsWith('dados_') && chave.endsWith('_pagFixas') && typeof val === 'object') {
+        pagFixasEnc = {...pagFixasEnc, ...val}; fontesEncontradas.push(chave);
+      }
+    } catch(e) {}
+  });
+  
+  // Remove duplicatas por ID
+  const uniq = (arr) => arr.filter((v,i,a) => a.findIndex(x=>x.id===v.id)===i);
+  fixasEnc = uniq(fixasEnc);
+  dividasEnc = uniq(dividasEnc);
+  receberEnc = uniq(receberEnc);
+  
+  const total = fixasEnc.length + dividasEnc.length + receberEnc.length;
+  
+  if (total === 0) {
+    result.innerHTML = '<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px;font-size:13px;color:#dc2626">❌ Nenhum dado encontrado no armazenamento.</div>';
+    btnRec.style.display = 'none';
+    dadosEncontrados = null;
+  } else {
+    dadosEncontrados = { fixas: fixasEnc, dividas: dividasEnc, receber: receberEnc, pagFixas: pagFixasEnc };
+    result.innerHTML = `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;font-size:13px;color:#16a34a">
+      ✅ <strong>${total} contas encontradas!</strong><br>
+      🏠 ${fixasEnc.length} conta(s) fixa(s)<br>
+      📌 ${dividasEnc.length} dívida(s)<br>
+      💰 ${receberEnc.length} conta(s) a receber<br>
+      <span style="font-size:11px;color:#5a8a6a;margin-top:4px;display:block">Fontes: ${[...new Set(fontesEncontradas)].join(', ')}</span>
+    </div>`;
+    btnRec.style.display = 'block';
+  }
+}
+
+function recuperarDados() {
+  if (!dadosEncontrados || !perfilAtivo) {
+    toast('⚠ Entre em um perfil primeiro e tente novamente');
+    return;
+  }
+  data.fixas = [...(data.fixas||[]), ...dadosEncontrados.fixas].filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i);
+  data.dividas = [...(data.dividas||[]), ...dadosEncontrados.dividas].filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i);
+  data.receber = [...(data.receber||[]), ...dadosEncontrados.receber].filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i);
+  data.pagFixas = {...dadosEncontrados.pagFixas, ...(data.pagFixas||{})};
+  saveDados(perfilAtivo.id, data);
+  toast('✓ ' + (dadosEncontrados.fixas.length + dadosEncontrados.dividas.length + dadosEncontrados.receber.length) + ' contas recuperadas!');
+  document.getElementById('diagnosticoResult').innerHTML = '<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;font-size:13px;color:#16a34a">✅ Dados importados com sucesso!</div>';
+  document.getElementById('btnRecuperar').style.display = 'none';
+  dadosEncontrados = null;
+  render();
 }
 
 // ══ ADMIN ══
