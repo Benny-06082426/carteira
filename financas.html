@@ -1072,7 +1072,8 @@ function cardReceber(c){
     <div class="divider"></div>
     <div class="card-actions">
       ${!quitado?`<button class="btn-sm btn-receber" onclick="abrirRecebimento('${c.id}')">💰 Receber</button>`:''}
-      <button class="btn-sm btn-hist" onclick="verHistReceber('${c.id}')">📋 Hist.</button>
+      ${!quitado?(()=>{const d=diasParaVencer(c.venc);if(d!==null&&d>=0&&d<=5)return `<button class="btn-sm btn-wpp" style="background:#dc2626" onclick="enviarWppLembrete('${c.id}')">💬 Cobrar!</button>`;return `<button class="btn-sm btn-wpp" onclick="enviarWppLembrete('${c.id}')">💬</button>`;})():''}
+      <button class="btn-sm btn-hist" onclick="verHistReceber('${c.id}')">📋</button>
       <button class="btn-sm btn-edit" onclick="editarReceber('${c.id}')">✏</button>
       <button class="btn-sm btn-del" onclick="deletarReceber('${c.id}')">🗑</button>
     </div>
